@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RPI-Walk.iml" filepath="$PROJECT_DIR$/RPI-Walk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RPIWalk.iml" filepath="$PROJECT_DIR$/RPIWalk.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
