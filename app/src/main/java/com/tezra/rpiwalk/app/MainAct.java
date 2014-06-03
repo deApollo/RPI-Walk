@@ -1,5 +1,6 @@
 package com.tezra.rpiwalk.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,10 +17,18 @@ public class MainAct extends ActionBarActivity {
 
     public final static String EXTRA_MSG = "com.tezra.rpiwalk.MSG";
 
-    String [] locations = {"loc1","loc2","loc3"};
+    String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
+    "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
+    "Center for Biotechnology and Interdisciplinary Studies", "Low Center for Industrial Innovation", "Chapel + Cultural Center", "Cogswell Laboratory", "Colonie Apartments",
+    "Commons Dining Hall", "Crockett Hall", "Darrin Communications Center", "Davison Hall", "E Complex", "East Campus Athletic Village Arena", "East Campus Athletic Village Stadium",
+    "Empire State Hall", "Experimental Media & Performing Arts Center", "Folsom Library", "Graduate Education", "Greene Building", "H Building", "Hall Hall", "Houston Field House",
+    "J Building", "J. Erik Jonsson Engineering Center", "Moes Southwest Grill", "Jonsson-Rowland Science Center", "Lally Hall", "LINAC Facility", "Louis Rubin Memorial Approach",
+    "Materials Research Center", "Mueller Center", "Nason Hall", "North Hall", "Nugent Hall", "Parking Garage", "Patroon Manor", "Pittsburgh Building", "Playhouse", "Polytechnic Residence Commons",
+    "Public Safety", "Quadrangle Complex", "Rensselaer Union", "Ricketts Building", "Robison Swimming Pool", "RPI Ambulance", "Russel Sage Dining Hall", "Russel Sage Laboratory",
+    "Sharp Hall", "Troy Building", "Voorhees Computing Center", "Walker Laboratory", "Warren Hall", "West Hall", "Winslow Building"};
 
-    public void generateToast(CharSequence text, int duration){
-        Toast toast = Toast.makeText(getApplicationContext(),text,duration);
+    public static void generateToast(Context c, CharSequence text, int duration){
+        Toast toast = Toast.makeText(c,text,duration);
         toast.show();
     }
 
@@ -60,7 +69,7 @@ public class MainAct extends ActionBarActivity {
             startActivity(dirInt);
         }
         else
-            generateToast("Please enter a valid location!",Toast.LENGTH_LONG);
+            generateToast(getApplicationContext(),"Please enter a valid location!",Toast.LENGTH_LONG);
     }
 
     @Override
