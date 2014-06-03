@@ -6,8 +6,44 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.overlays.Polyline;
+import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 
 public class DirectionsAct extends ActionBarActivity {
+
+    private void initializeMap(GeoPoint start, GeoPoint finish){
+        MapView map = (MapView) findViewById(R.id.dir);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+
+        IMapController mCon = map.getController();
+        mCon.setZoom(10);
+        mCon.setCenter(start);
+
+        RoadManager rm = new MapQuestRoadManager("api");
+        rm.addRequestOption("routeType=pedestrian");
+
+        ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
+        wp.add(start);
+        wp.add(finish);
+
+        Road r = rm.getRoad(wp);
+        Polyline rOverlay = rm.buildRoadOverlay(r,this);
+
+        map.getOverlays().add(rOverlay);
+        map.invalidate();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +52,17 @@ public class DirectionsAct extends ActionBarActivity {
 
         Intent i = getIntent();
         String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
+
+        GeoPoint start;
+        GeoPoint finish;
+
+        try{
+            start = Utils.getPointFromLocationString(locs[0]);
+            finish = Utils.getPointFromLocationString(locs[1]);
+            initializeMap(start,finish);
+        } catch(Exception e){
+            finish();
+        }
     }
 
 
