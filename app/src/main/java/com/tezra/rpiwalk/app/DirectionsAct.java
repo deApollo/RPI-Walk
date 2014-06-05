@@ -3,6 +3,7 @@ package com.tezra.rpiwalk.app;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,35 +16,13 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 
 
 public class DirectionsAct extends ActionBarActivity {
-
-    private void initializeMap(GeoPoint start, GeoPoint finish){
-        MapView map = (MapView) findViewById(R.id.dir);
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
-
-        IMapController mCon = map.getController();
-        mCon.setZoom(10);
-        mCon.setCenter(start);
-
-        RoadManager rm = new MapQuestRoadManager("api");
-        rm.addRequestOption("routeType=pedestrian");
-
-        ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
-        wp.add(start);
-        wp.add(finish);
-
-        Road r = rm.getRoad(wp);
-        Polyline rOverlay = rm.buildRoadOverlay(r,this);
-
-        map.getOverlays().add(rOverlay);
-        map.invalidate();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +30,19 @@ public class DirectionsAct extends ActionBarActivity {
         setContentView(R.layout.activity_directions);
 
         Intent i = getIntent();
-        String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
+        final String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
 
-        GeoPoint start;
-        GeoPoint finish;
+        MapView map = (MapView) findViewById(R.id.dir);
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
 
-        try{
-            start = Utils.getPointFromLocationString(locs[0]);
-            finish = Utils.getPointFromLocationString(locs[1]);
-            initializeMap(start,finish);
-        } catch(Exception e){
-            finish();
-        }
+        IMapController mCon = map.getController();
+        mCon.setZoom(18);
+        mCon.setCenter(new GeoPoint(42.730234,-73.6766982));
+
+        new MapInitializerTask().execute(locs[0],locs[1],map,this);
+
     }
 
 

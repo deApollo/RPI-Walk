@@ -49,9 +49,9 @@ public class MainAct extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final AutoCompleteTextView start = (AutoCompleteTextView) findViewById(R.id.start);
-        final AutoCompleteTextView finish = (AutoCompleteTextView) findViewById(R.id.finish);
-        final ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.select_dialog_item,locations);
+        AutoCompleteTextView start = (AutoCompleteTextView) findViewById(R.id.start);
+        AutoCompleteTextView finish = (AutoCompleteTextView) findViewById(R.id.finish);
+        ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.select_dialog_item,locations);
 
         start.setThreshold(0);
         finish.setThreshold(0);
