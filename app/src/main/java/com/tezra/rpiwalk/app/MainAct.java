@@ -21,7 +21,7 @@ public class MainAct extends ActionBarActivity {
     "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
     "Center for Biotechnology and Interdisciplinary Studies", "Low Center for Industrial Innovation", "Chapel + Cultural Center", "Cogswell Laboratory", "Colonie Apartments",
     "Commons Dining Hall", "Crockett Hall", "Darrin Communications Center", "Davison Hall", "E Complex", "East Campus Athletic Village Arena", "East Campus Athletic Village Stadium",
-    "Empire State Hall", "Experimental Media & Performing Arts Center", "Folsom Library", "Graduate Education", "Greene Building", "H Building", "Hall Hall", "Houston Field House",
+    "Empire State Hall", "Experimental Media and Performing Arts Center", "Folsom Library", "Graduate Education", "Greene Building", "H Building", "Hall Hall", "Houston Field House",
     "J Building", "J. Erik Jonsson Engineering Center", "Moes Southwest Grill", "Jonsson-Rowland Science Center", "Lally Hall", "LINAC Facility", "Louis Rubin Memorial Approach",
     "Materials Research Center", "Mueller Center", "Nason Hall", "North Hall", "Nugent Hall", "Parking Garage", "Patroon Manor", "Pittsburgh Building", "Playhouse", "Polytechnic Residence Commons",
     "Public Safety", "Quadrangle Complex", "Rensselaer Union", "Ricketts Building", "Robison Swimming Pool", "RPI Ambulance", "Russel Sage Dining Hall", "Russel Sage Laboratory",
@@ -33,14 +33,7 @@ public class MainAct extends ActionBarActivity {
     }
 
     private boolean validateText(String i, String j){
-        boolean f1 = false; boolean f2 = false;
-        for(String s : locations){
-            if(s.equals(i))
-                f1 = true;
-            if(s.equals(j))
-                f2 = true;
-        }
-        return f1 && f2;
+        return !i.isEmpty() && !j.isEmpty();
     }
 
     @Override
@@ -72,6 +65,10 @@ public class MainAct extends ActionBarActivity {
             generateToast(getApplicationContext(),"Please enter a valid location!",Toast.LENGTH_LONG);
     }
 
+    public void myLoc(View view){
+        ((AutoCompleteTextView)findViewById(R.id.start)).setText("My Location");
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -86,8 +83,8 @@ public class MainAct extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-
+        if (id == R.id.action_schedule) {
+            generateToast(this,"You clicked on the scheduling button!",Toast.LENGTH_LONG);
             return true;
         }
         return super.onOptionsItemSelected(item);

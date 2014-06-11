@@ -30,7 +30,7 @@ public class DirectionsAct extends ActionBarActivity {
         setContentView(R.layout.activity_directions);
 
         Intent i = getIntent();
-        final String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
+        String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
 
         MapView map = (MapView) findViewById(R.id.dir);
         map.setTileSource(TileSourceFactory.MAPNIK);

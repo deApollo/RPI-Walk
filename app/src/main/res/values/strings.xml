@@ -3,7 +3,10 @@
 
     <string name="app_name">RPI Walk</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_schedule">Schedule</string>
     <string name="title_activity_directions">Directions</string>
+    <string name="from_string">From</string>
+    <string name="finish_string">To</string>
+    <string name="find_route_button">Find Route</string>
 
 </resources>
