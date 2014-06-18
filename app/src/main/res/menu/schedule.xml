@@ -1,13 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.tezra.rpiwalk.app.MainAct" >
-    
-    <item android:id="@+id/action_schedule"
-        android:title="@string/action_schedule"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
+    tools:context="com.tezra.rpiwalk.app.ScheduleAct" >
     <item android:id="@+id/action_about"
         android:title="@string/action_about"
         android:orderInCategory="200"

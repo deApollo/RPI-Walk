@@ -9,8 +9,8 @@
     tools:context="com.tezra.rpiwalk.app.DirectionsAct">
 
     <view
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         class="org.osmdroid.views.MapView"
         android:id="@+id/dir"
         android:layout_alignParentTop="true"

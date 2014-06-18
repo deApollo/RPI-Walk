@@ -3,7 +3,9 @@
     package="com.tezra.rpiwalk.app" >
 
     <uses-library android:name="org.osmdroid.views.MapView" />
-    <uses-sdk android:minSdkVersion="9" />
+
+    <uses-sdk android:minSdkVersion="16" />
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -13,7 +15,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/rpiwalk_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -28,6 +30,18 @@
         <activity
             android:name=".DirectionsAct"
             android:label="@string/title_activity_directions" >
+        </activity>
+        <activity
+            android:name=".ScheduleAct"
+            android:label="@string/title_activity_schedule" >
+        </activity>
+        <activity
+            android:name=".AboutAct"
+            android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:name=".ScheduleItemAdder"
+            android:label="@string/title_activity_schedule_item_adder" >
         </activity>
     </application>
 

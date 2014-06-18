@@ -1,7 +1,10 @@
 package com.tezra.rpiwalk.app;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,13 +12,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Toast;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 
 public class MainAct extends ActionBarActivity {
 
     public final static String EXTRA_MSG = "com.tezra.rpiwalk.MSG";
+    public static ArrayList<Event> eventList = new ArrayList<Event>();
+    public EventTrackerTask eTracker;
 
     String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
     "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
@@ -32,8 +40,30 @@ public class MainAct extends ActionBarActivity {
         toast.show();
     }
 
+
     private boolean validateText(String i, String j){
         return !i.isEmpty() && !j.isEmpty();
+    }
+
+    private void loadData(){
+        File file = new File(this.getFilesDir(),"data.dat");
+        try {
+            if (file.exists()) {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream objIn = new ObjectInputStream(fileIn);
+                eventList = (ArrayList<Event>) objIn.readObject();
+            }
+        } catch (Exception e){
+
+        }
+    }
+
+    private void startEventTracker() {
+        LocationManager m = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria c = new Criteria();
+        c.setAccuracy(Criteria.ACCURACY_FINE); c.setAltitudeRequired(false); c.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        eTracker = new EventTrackerTask(m.getLastKnownLocation(m.getBestProvider(c,true)),(NotificationManager)getSystemService(NOTIFICATION_SERVICE),this);
+        m.requestLocationUpdates(m.getBestProvider(c,true),60000,15,eTracker);
     }
 
     @Override
@@ -41,6 +71,9 @@ public class MainAct extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loadData();
+        startEventTracker();
 
         AutoCompleteTextView start = (AutoCompleteTextView) findViewById(R.id.start);
         AutoCompleteTextView finish = (AutoCompleteTextView) findViewById(R.id.finish);
@@ -84,7 +117,11 @@ public class MainAct extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_schedule) {
-            generateToast(this,"You clicked on the scheduling button!",Toast.LENGTH_LONG);
+            startActivity(new Intent(this,ScheduleAct.class));
+            return true;
+        }
+        else if(id == R.id.action_about) {
+            startActivity(new Intent(this,AboutAct.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
