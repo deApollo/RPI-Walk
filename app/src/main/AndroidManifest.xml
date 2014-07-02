@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainAct"
+            android:name=".acts.MainAct"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,19 +28,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DirectionsAct"
+            android:name=".acts.DirectionsAct"
             android:label="@string/title_activity_directions" >
         </activity>
         <activity
-            android:name=".ScheduleAct"
+            android:name=".acts.ScheduleAct"
             android:label="@string/title_activity_schedule" >
         </activity>
         <activity
-            android:name=".AboutAct"
+            android:name=".acts.AboutAct"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name=".ScheduleItemAdder"
+            android:name=".acts.ScheduleItemAdder"
             android:label="@string/title_activity_schedule_item_adder" >
         </activity>
     </application>

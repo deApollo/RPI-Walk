@@ -1,25 +1,21 @@
-package com.tezra.rpiwalk.app;
+package com.tezra.rpiwalk.app.acts;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
+import com.tezra.rpiwalk.app.R;
+import com.tezra.rpiwalk.app.tasks.MapInitializerTask;
+
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.overlays.Polyline;
-import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
-import org.osmdroid.bonuspack.routing.Road;
-import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RunnableFuture;
 
 
 public class DirectionsAct extends ActionBarActivity {
@@ -30,7 +26,7 @@ public class DirectionsAct extends ActionBarActivity {
         setContentView(R.layout.activity_directions);
 
         Intent i = getIntent();
-        String [] locs = i.getStringArrayExtra(MainAct.EXTRA_MSG);
+        ArrayList<ParcelableGeoPoint> pList =  i.getParcelableArrayListExtra(MainAct.EXTRA_MSG);
 
         MapView map = (MapView) findViewById(R.id.dir);
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -41,7 +37,7 @@ public class DirectionsAct extends ActionBarActivity {
         mCon.setZoom(18);
         mCon.setCenter(new GeoPoint(42.730234,-73.6766982));
 
-        new MapInitializerTask().execute(locs[0],locs[1],map,this);
+        new MapInitializerTask().execute(pList.get(0).getGeoPoint(),pList.get(1).getGeoPoint(),map,this);
 
     }
 

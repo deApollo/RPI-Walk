@@ -6,7 +6,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.tezra.rpiwalk.app.ScheduleItemAdder">
+    tools:context="com.tezra.rpiwalk.app.acts.ScheduleItemAdder">
 
     <EditText
         android:layout_width="fill_parent"
@@ -31,34 +31,68 @@
         android:textSize="15sp"
         android:layout_marginTop="15dp" />
 
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/days"
-        android:hint="Day(s) "
-        android:textSize="15sp"
-        android:layout_below="@+id/location"
-        android:layout_alignLeft="@+id/location"
-        android:layout_alignStart="@+id/location"
-        android:layout_marginTop="15dp" />
-
-    <Button
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Item"
-        android:id="@+id/add_item"
+        android:text="T"
+        android:id="@+id/t"
         android:layout_marginTop="35dp"
-        android:onClick="addItem"
-        android:layout_below="@+id/timePicker"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/location"
+        android:layout_toRightOf="@+id/m" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="W"
+        android:id="@+id/w"
+        android:layout_alignTop="@+id/t"
+        android:layout_toRightOf="@+id/t"
+        android:layout_marginLeft="10dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="M"
+        android:id="@+id/m"
+        android:layout_alignTop="@+id/t"
+        android:layout_alignLeft="@+id/location"
+        android:layout_alignStart="@+id/location" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TH"
+        android:id="@+id/th"
+        android:layout_alignTop="@+id/w"
+        android:layout_toRightOf="@+id/w"
+        android:layout_marginLeft="10dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="F"
+        android:id="@+id/f"
+        android:layout_alignTop="@+id/th"
+        android:layout_toRightOf="@+id/th"
+        android:layout_marginLeft="10dp" />
 
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/timePicker"
-        android:layout_below="@+id/days"
-        android:layout_alignLeft="@+id/days"
-        android:layout_alignStart="@+id/days"
-        android:layout_marginTop="35dp" />
+        android:layout_below="@+id/timePicker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Finish"
+        android:id="@+id/button"
+        android:layout_below="@+id/timePicker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="34dp"
+        android:onClick="addItem" />
 
 </RelativeLayout>

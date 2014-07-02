@@ -1,4 +1,4 @@
-package com.tezra.rpiwalk.app;
+package com.tezra.rpiwalk.app.acts;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -7,12 +7,24 @@ import android.location.Criteria;
 import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.tezra.rpiwalk.app.utils.Event;
+import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
+import com.tezra.rpiwalk.app.R;
+import com.tezra.rpiwalk.app.tasks.EventTrackerTask;
+import com.tezra.rpiwalk.app.tasks.LocationRetrieverTask;
+
+import org.osmdroid.util.GeoPoint;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -22,8 +34,9 @@ import java.util.ArrayList;
 public class MainAct extends ActionBarActivity {
 
     public final static String EXTRA_MSG = "com.tezra.rpiwalk.MSG";
+    public final static String EXTRA_MSG_2 = "com.tezra.rpiwalk.MSG_2";
     public static ArrayList<Event> eventList = new ArrayList<Event>();
-    public EventTrackerTask eTracker;
+    public static EventTrackerTask eTracker;
 
     String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
     "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
@@ -54,7 +67,7 @@ public class MainAct extends ActionBarActivity {
                 eventList = (ArrayList<Event>) objIn.readObject();
             }
         } catch (Exception e){
-
+            Log.i("Error:","There was an issue loading the data file!",e.getCause());
         }
     }
 
@@ -83,38 +96,56 @@ public class MainAct extends ActionBarActivity {
         finish.setThreshold(0);
         start.setAdapter(adp);
         finish.setAdapter(adp);
+
+        final Button b = (Button)findViewById(R.id.my_loc);
+
+        b.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                    b.setBackground(getResources().getDrawable(R.drawable.location_icon_clicked));
+                else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    b.setBackground(getResources().getDrawable(R.drawable.location_icon));
+                return false;
+            }
+        });
     }
 
     public void findRoute(View view){
-        String from = ((AutoCompleteTextView) findViewById(R.id.start)).getText().toString();
-        String to = ((AutoCompleteTextView) findViewById(R.id.finish)).getText().toString();
-        if(validateText(from, to)){
-            Intent dirInt = new Intent(this, DirectionsAct.class);
-            String [] locs = {from, to};
-            dirInt.putExtra(EXTRA_MSG,locs);
-            startActivity(dirInt);
+        try {
+            String from = ((AutoCompleteTextView) findViewById(R.id.start)).getText().toString();
+            String to = ((AutoCompleteTextView) findViewById(R.id.finish)).getText().toString();
+            if (validateText(from, to)) {
+                GeoPoint start = new LocationRetrieverTask().execute(from,this).get();
+                GeoPoint finish = new LocationRetrieverTask().execute(to,this).get();
+                if (start != null && finish != null) {
+                    Intent dirInt = new Intent(this, DirectionsAct.class);
+                    ArrayList<ParcelableGeoPoint> pList = new ArrayList<ParcelableGeoPoint>();
+                    pList.add(new ParcelableGeoPoint(start)); pList.add(new ParcelableGeoPoint(finish));
+                    dirInt.putExtra(EXTRA_MSG, pList);
+                    startActivity(dirInt);
+                } else
+                    generateToast(this, "Please make sure your entered locations are valid!", Toast.LENGTH_LONG);
+            } else
+                generateToast(getApplicationContext(), "Please enter a location!", Toast.LENGTH_LONG);
+        } catch (Exception e){
+            Log.i("Error:","There was an issue validating route locations",e.getCause());
         }
-        else
-            generateToast(getApplicationContext(),"Please enter a valid location!",Toast.LENGTH_LONG);
     }
 
     public void myLoc(View view){
+
         ((AutoCompleteTextView)findViewById(R.id.start)).setText("My Location");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_schedule) {
             startActivity(new Intent(this,ScheduleAct.class));

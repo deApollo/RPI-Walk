@@ -1,4 +1,4 @@
-package com.tezra.rpiwalk.app;
+package com.tezra.rpiwalk.app.utils;
 
 import android.content.Context;
 

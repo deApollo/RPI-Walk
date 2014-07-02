@@ -1,22 +1,25 @@
-package com.tezra.rpiwalk.app;
+package com.tezra.rpiwalk.app.acts;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
+
+import com.tezra.rpiwalk.app.utils.Event;
+import com.tezra.rpiwalk.app.R;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +42,6 @@ public class ScheduleAct extends ActionBarActivity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +55,21 @@ public class ScheduleAct extends ActionBarActivity {
 
         final ListView l = lis;
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
-                MainAct.generateToast(myView.getContext(),"You selected an item!", Toast.LENGTH_LONG);
+            public void onItemClick(AdapterView<?> myAdapter, View myView,final int myItemInt, long mylng) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(myView.getContext());
+                builder.setTitle("Edit Item")
+                        .setPositiveButton("Delete",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                itemList.remove(myItemInt);
+                                MainAct.eventList.remove(myItemInt);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).show();
             }
         });
     }
@@ -68,7 +83,7 @@ public class ScheduleAct extends ActionBarActivity {
             ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
             objOut.writeObject(MainAct.eventList);
         } catch (IOException e){
-
+            Log.i("Error:","There was an issue saving the data file",e.getCause());
         }
     }
 
@@ -110,13 +125,14 @@ public class ScheduleAct extends ActionBarActivity {
             case(0) : {
                 if(resultCode == Activity.RESULT_OK) {
                     String [] result = data.getStringArrayExtra(MainAct.EXTRA_MSG);
-                    Event e = new Event(result[0],result[1],result[2],result[3],result[4]);
+                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3]);
                     Map<String,String> tempData = new HashMap<String,String>(2);
                     tempData.put("main",e.getMainText());
                     tempData.put("sub",e.getSubText());
                     itemList.add(tempData);
                     MainAct.eventList.add(e);
                     adapter.notifyDataSetChanged();
+                    MainAct.eTracker.checkEvents();
                 }
             }
         }
