@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.tezra.rpiwalk.app.R;
 import com.tezra.rpiwalk.app.tasks.LocationRetrieverTask;
 
+import org.osmdroid.util.GeoPoint;
+
 
 public class ScheduleItemAdder extends ActionBarActivity {
 
@@ -66,9 +68,11 @@ public class ScheduleItemAdder extends ActionBarActivity {
             if (event_name.getText().length() != 0) {
                 if (location.getText().length() != 0) {
                     if (hasADaySelected(days)) {
-                        if (new LocationRetrieverTask().execute(location.getText().toString(),this).get() != null) {
+                        GeoPoint p = new LocationRetrieverTask().execute(location.getText().toString(),this).get();
+                        if (p != null) {
                             Intent resultIntent = new Intent();
-                            String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute())};
+                            String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute()),
+                                            String.valueOf(p.getLatitude()),String.valueOf(p.getLongitude())};
                             resultIntent.putExtra(MainAct.EXTRA_MSG, data);
                             resultIntent.putExtra(MainAct.EXTRA_MSG_2,days);
                             setResult(Activity.RESULT_OK, resultIntent);

@@ -1,20 +1,28 @@
 package com.tezra.rpiwalk.app.utils;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.io.Serializable;
 
 public class Event implements Serializable {
+    private double lat;
+    private double lon;
+
     public String name;
     public String location;
     public boolean [] days;
     public int hour;
     public int minute;
 
-    public Event(String name, String location, boolean [] days, String hour, String minute) {
+
+    public Event(String name, String location, boolean [] days, String hour, String minute, double lat, double lon) {
         this.name = name;
         this.location = location;
         this.days = days;
         this.hour = Integer.parseInt(hour);
         this.minute = Integer.parseInt(minute);
+        this.lat = lat;
+        this.lon = lon;
     }
 
     private String parseDays(){
@@ -29,7 +37,16 @@ public class Event implements Serializable {
             ret += "Thursday, ";
         if(days[4])
             ret += "Friday";
-        return ret.subSequence(0,ret.lastIndexOf(",")).toString();
+        if(ret.contains(","))
+            return ret.subSequence(0,ret.lastIndexOf(",")).toString();
+        else
+            return ret;
+    }
+
+    private String parseInt(int i){
+        if(i < 10)
+            return "0"+String.valueOf(i);
+        return String.valueOf(i);
     }
 
     public int getEventSeconds(){
@@ -41,6 +58,10 @@ public class Event implements Serializable {
     }
 
     public String getSubText() {
-        return parseDays() + " - " + hour + ":" + minute;
+        return parseDays() + " - " + parseInt(hour) + ":" + parseInt(minute);
+    }
+
+    public GeoPoint getLocation() {
+        return new GeoPoint(lat,lon);
     }
 }

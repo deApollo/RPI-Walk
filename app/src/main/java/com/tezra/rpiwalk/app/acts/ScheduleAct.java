@@ -125,7 +125,7 @@ public class ScheduleAct extends ActionBarActivity {
             case(0) : {
                 if(resultCode == Activity.RESULT_OK) {
                     String [] result = data.getStringArrayExtra(MainAct.EXTRA_MSG);
-                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3]);
+                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3],Double.valueOf(result[4]),Double.valueOf(result[5]));
                     Map<String,String> tempData = new HashMap<String,String>(2);
                     tempData.put("main",e.getMainText());
                     tempData.put("sub",e.getSubText());

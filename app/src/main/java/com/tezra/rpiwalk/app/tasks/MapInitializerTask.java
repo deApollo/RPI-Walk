@@ -35,7 +35,7 @@ public class MapInitializerTask extends AsyncTask<Object, Void, InfoPacket>{
     }
 
     private void populateNodes(Road r, MapView m){
-        Drawable nodeIcon = m.getContext().getResources().getDrawable(R.drawable.marker_node);
+        Drawable nodeIcon = m.getContext().getResources().getDrawable(R.drawable.way_point_icon);
         for(int i = 0; i < r.mNodes.size(); i++){
             RoadNode node = r.mNodes.get(i);
             Marker nodeM = new Marker(m);
@@ -44,11 +44,14 @@ public class MapInitializerTask extends AsyncTask<Object, Void, InfoPacket>{
                 nodeM.setIcon(nodeIcon);
                 nodeM.setTitle("Step " + i);
             } else if( i == 0) {
+                nodeM.setIcon(m.getContext().getResources().getDrawable(R.drawable.start_icon));
                 nodeM.setTitle("Start");
                 nodeM.setSubDescription("Route Time: " + getParsedRouteTimeString((int)r.mDuration));
             }
-            else
+            else {
                 nodeM.setTitle("Finish");
+                nodeM.setIcon(m.getContext().getResources().getDrawable(R.drawable.end_icon));
+            }
             nodeM.setSnippet(node.mInstructions);
             m.getOverlays().add(nodeM);
         }
