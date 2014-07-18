@@ -11,6 +11,8 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.tezra.rpiwalk.app.acts.DirectionsAct;
 import com.tezra.rpiwalk.app.utils.Event;
 import com.tezra.rpiwalk.app.acts.MainAct;
@@ -19,22 +21,37 @@ import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
 import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
-public class EventTrackerTask implements LocationListener {
+public class EventLocationListener implements LocationListener {
     private Location curLoc;
     private NotificationManager m;
     private int timeDiffSeconds = 5;
+    private HashMap<String,Double> tMap = new HashMap<String, Double>();
     private Context c;
 
     private double getTimeToEvent(Event event){
-        try {
-            ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
-            wp.add(new GeoPoint(curLoc));
-            wp.add(event.getLocation());
-            return new RoadRetrieverTask().execute(wp).get().mDuration;
-        } catch (Exception e){
-            return -1;
+        if(tMap.containsKey(event.name))
+            return tMap.get(event.name);
+        else {
+            try {
+                ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
+                wp.add(new GeoPoint(curLoc));
+                wp.add(event.getLocation());
+                double d = new RoadRetrieverTask().execute(wp).get().mDuration;
+                tMap.put(event.name,d);
+                return  d;
+            } catch (Exception e) {
+                return -1;
+            }
         }
+    }
+
+    private String parseSeconds(int seconds){
+        if(seconds > 60)
+            return String.valueOf(seconds%60) + "m " + String.valueOf(seconds/60 - seconds%60*60) + "s";
+        else
+            return String.valueOf(seconds) + "s";
     }
 
     private void buildNotification(Event e,int leaveTime){
@@ -50,7 +67,7 @@ public class EventTrackerTask implements LocationListener {
 
             Notification n = new Notification.Builder(c)
                     .setContentTitle(e.name)
-                    .setContentText("Leave within " + leaveTime + " seconds to arrive on time!")
+                    .setContentText("Leave within " + parseSeconds(leaveTime) + " to arrive on time!")
                     .setContentIntent(pI)
                     .setSmallIcon(R.drawable.notification_icon)
                     .setAutoCancel(true)
@@ -71,8 +88,9 @@ public class EventTrackerTask implements LocationListener {
             if(day > 0 && day <= 4 && e.days[day]) {
                 double timeToEvent = getTimeToEvent(e);
                 if(timeToEvent > -1) {
-                    if ((e.getEventSeconds() + timeToEvent + timeDiffSeconds) >= (t.hour * 60 * 60 + t.minute * 60 + t.second) ) {
-                        int dif = (int) (e.getEventSeconds() + timeToEvent + timeDiffSeconds - t.hour * 60 * 60 + t.minute * 60 + t.second);
+                    if ((e.getEventSeconds() - timeToEvent - timeDiffSeconds) <= (t.hour * 60 * 60 + t.minute * 60 + t.second) ) {
+                        MainAct.generateToast(c,String.valueOf(timeToEvent), Toast.LENGTH_LONG);
+                        int dif = (int) ((t.hour * 60 * 60 + t.minute * 60 + t.second) - (e.getEventSeconds() - timeToEvent - timeDiffSeconds));
                         buildNotification(e,dif);
                     }
                 }
@@ -80,7 +98,7 @@ public class EventTrackerTask implements LocationListener {
         }
     }
 
-    public EventTrackerTask(Location curLocation, NotificationManager manager, Context con){
+    public EventLocationListener(Location curLocation, NotificationManager manager, Context con){
         curLoc = curLocation;
         m = manager;
         c = con;
@@ -90,6 +108,7 @@ public class EventTrackerTask implements LocationListener {
     @Override
     public void onLocationChanged(Location loc) {
         curLoc = loc;
+        tMap.clear();
         checkEvents();
     }
 
