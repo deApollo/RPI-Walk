@@ -2,21 +2,19 @@ package com.tezra.rpiwalk.app.acts;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-
 import com.tezra.rpiwalk.app.utils.Event;
 import com.tezra.rpiwalk.app.R;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ScheduleAct extends ActionBarActivity {
+public class ScheduleAct extends Fragment {
 
 
     List<Map<String,String>> itemList = new ArrayList<Map<String,String>>();
@@ -43,14 +41,14 @@ public class ScheduleAct extends ActionBarActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View v = inflater.inflate(R.layout.activity_schedule,container,false);
 
         populateItemList();
 
-        ListView lis = (ListView) findViewById(R.id.item_list);
-        adapter = new SimpleAdapter(this, itemList,android.R.layout.simple_list_item_2,new String [] {"main","sub"},new int [] {android.R.id.text1,android.R.id.text2});
+        ListView lis = (ListView) v.findViewById(R.id.item_list);
+        adapter = new SimpleAdapter(getActivity(), itemList,android.R.layout.simple_list_item_2,new String [] {"main","sub"},new int [] {android.R.id.text1,android.R.id.text2});
         lis.setAdapter(adapter);
 
         final ListView l = lis;
@@ -72,10 +70,12 @@ public class ScheduleAct extends ActionBarActivity {
                         }).show();
             }
         });
+
+        return v;
     }
 
     private void saveData(){
-        File file = new File(this.getFilesDir(),"data.dat");
+        File file = new File(getActivity().getFilesDir(),"data.dat");
         try{
             if(!file.exists())
                 file.createNewFile();
@@ -88,31 +88,19 @@ public class ScheduleAct extends ActionBarActivity {
     }
 
     @Override
-    protected void onStop() {
+    public void onPause() {
+        super.onPause();
+        saveData();
+    }
+
+    @Override
+    public void onStop() {
         super.onStop();
         saveData();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.schedule, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_about) {
-            startActivity(new Intent(this,AboutAct.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void addItem(View view){
-        startActivityForResult(new Intent(this,ScheduleItemAdder.class),0);
+        startActivityForResult(new Intent(getActivity(),ScheduleItemAdder.class),0);
     }
 
     @Override

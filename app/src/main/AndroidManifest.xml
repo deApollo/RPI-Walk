@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tezra.rpiwalk.app" >
 
-    <uses-library android:name="org.osmdroid.views.MapView" />
-
     <uses-sdk android:minSdkVersion="16" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -18,26 +20,24 @@
         android:icon="@drawable/rpiwalk_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBm22hnPCliahKQdfHBaLSIqYbYYq6W4iY" />
+
         <activity
             android:name=".acts.MainAct"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".acts.DirectionsAct"
             android:label="@string/title_activity_directions" >
-        </activity>
-        <activity
-            android:name=".acts.ScheduleAct"
-            android:label="@string/title_activity_schedule" >
-        </activity>
-        <activity
-            android:name=".acts.AboutAct"
-            android:label="@string/title_activity_about" >
         </activity>
         <activity
             android:name=".acts.ScheduleItemAdder"
@@ -49,5 +49,4 @@
             android:exported="false" >
         </service>
     </application>
-
 </manifest>

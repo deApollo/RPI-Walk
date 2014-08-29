@@ -1,6 +1,7 @@
 package com.tezra.rpiwalk.app.utils;
 
-import org.osmdroid.util.GeoPoint;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
@@ -61,7 +62,7 @@ public class Event implements Serializable {
         return parseDays() + " - " + parseInt(hour) + ":" + parseInt(minute);
     }
 
-    public GeoPoint getLocation() {
-        return new GeoPoint(lat,lon);
+    public LatLng getLocation() {
+        return new LatLng(lat,lon);
     }
 }

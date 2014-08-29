@@ -1,61 +1,59 @@
 package com.tezra.rpiwalk.app.acts;
 
-import android.app.NotificationManager;
+import android.app.Activity;
+import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.LocationManager;
-import android.support.v7.app.ActionBarActivity;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
-
+import com.tezra.rpiwalk.app.R;
 import com.tezra.rpiwalk.app.tasks.EventTrackerService;
 import com.tezra.rpiwalk.app.utils.Event;
-import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
-import com.tezra.rpiwalk.app.R;
-import com.tezra.rpiwalk.app.tasks.EventLocationListener;
-import com.tezra.rpiwalk.app.tasks.LocationRetrieverTask;
-
-import org.osmdroid.util.GeoPoint;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-
-public class MainAct extends ActionBarActivity {
+public class MainAct extends Activity
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public final static String EXTRA_MSG = "com.tezra.rpiwalk.MSG";
     public final static String EXTRA_MSG_2 = "com.tezra.rpiwalk.MSG_2";
     public static ArrayList<Event> eventList = new ArrayList<Event>();
 
-    String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
-    "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
-    "Center for Biotechnology and Interdisciplinary Studies", "Low Center for Industrial Innovation", "Chapel + Cultural Center", "Cogswell Laboratory", "Colonie Apartments",
-    "Commons Dining Hall", "Crockett Hall", "Darrin Communications Center", "Davison Hall", "E Complex", "East Campus Athletic Village Arena", "East Campus Athletic Village Stadium",
-    "Empire State Hall", "Experimental Media and Performing Arts Center", "Folsom Library", "Graduate Education", "Greene Building", "H Building", "Hall Hall", "Houston Field House",
-    "J Building", "J. Erik Jonsson Engineering Center", "Moes Southwest Grill", "Jonsson-Rowland Science Center", "Lally Hall", "LINAC Facility", "Louis Rubin Memorial Approach",
-    "Materials Research Center", "Mueller Center", "Nason Hall", "North Hall", "Nugent Hall", "Parking Garage", "Patroon Manor", "Pittsburgh Building", "Playhouse", "Polytechnic Residence Commons",
-    "Public Safety", "Quadrangle Complex", "Rensselaer Union", "Ricketts Building", "Robison Swimming Pool", "RPI Ambulance", "Russel Sage Dining Hall", "Russel Sage Laboratory",
-    "Sharp Hall", "Troy Building", "Voorhees Computing Center", "Walker Laboratory", "Warren Hall", "West Hall", "Winslow Building"};
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    private CharSequence mTitle;
+
+    private AboutAct about;
+    private LandingAct landing;
+    private ScheduleAct scheduling;
+
+    public void myLoc(View v) {
+        landing.myLoc(v);
+    }
+
+    public void findRoute(View v) {
+        landing.findRoute(v);
+    }
+
+    public void addItem(View v){
+        scheduling.addItem(v);
+    }
 
     public static void generateToast(Context c, CharSequence text, int duration){
         Toast toast = Toast.makeText(c,text,duration);
         toast.show();
-    }
-
-
-    private boolean validateText(String i, String j){
-        return !i.isEmpty() && !j.isEmpty();
     }
 
     private void loadData(){
@@ -64,10 +62,10 @@ public class MainAct extends ActionBarActivity {
             if (file.exists()) {
                 FileInputStream fileIn = new FileInputStream(file);
                 ObjectInputStream objIn = new ObjectInputStream(fileIn);
-                eventList = (ArrayList<Event>) objIn.readObject();
+                MainAct.eventList = (ArrayList<Event>) objIn.readObject();
             }
         } catch (Exception e){
-            Log.i("Error:","There was an issue loading the data file!",e.getCause());
+            Log.i("Error:", "There was an issue loading the data file!", e.getCause());
         }
     }
 
@@ -76,83 +74,104 @@ public class MainAct extends ActionBarActivity {
         startService(mServiceIntent);
     }
 
+    private void initializeFragments() {
+        about = new AboutAct();
+        landing = new LandingAct();
+        scheduling = new ScheduleAct();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+
+        initializeFragments();
+
         setContentView(R.layout.activity_main);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, landing)
+                .commit();
 
         loadData();
         startEventTracker();
 
-        AutoCompleteTextView start = (AutoCompleteTextView) findViewById(R.id.start);
-        AutoCompleteTextView finish = (AutoCompleteTextView) findViewById(R.id.finish);
-        ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.select_dialog_item,locations);
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
 
-        start.setThreshold(0);
-        finish.setThreshold(0);
-        start.setAdapter(adp);
-        finish.setAdapter(adp);
-
-        final Button b = (Button)findViewById(R.id.my_loc);
-
-        b.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                    b.setBackground(getResources().getDrawable(R.drawable.location_icon_clicked));
-                else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
-                    b.setBackground(getResources().getDrawable(R.drawable.location_icon));
-                return false;
-            }
-        });
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
-    public void findRoute(View view){
-        try {
-            String from = ((AutoCompleteTextView) findViewById(R.id.start)).getText().toString();
-            String to = ((AutoCompleteTextView) findViewById(R.id.finish)).getText().toString();
-            if (validateText(from, to)) {
-                GeoPoint start = new LocationRetrieverTask().execute(from,this).get();
-                GeoPoint finish = new LocationRetrieverTask().execute(to,this).get();
-                if (start != null && finish != null) {
-                    Intent dirInt = new Intent(this, DirectionsAct.class);
-                    ArrayList<ParcelableGeoPoint> pList = new ArrayList<ParcelableGeoPoint>();
-                    pList.add(new ParcelableGeoPoint(start)); pList.add(new ParcelableGeoPoint(finish));
-                    dirInt.putExtra(EXTRA_MSG, pList);
-                    startActivity(dirInt);
-                } else
-                    generateToast(this, "Please make sure your entered locations are valid!", Toast.LENGTH_LONG);
-            } else
-                generateToast(getApplicationContext(), "Please enter a location!", Toast.LENGTH_LONG);
-        } catch (Exception e){
-            Log.i("Error:","There was an issue validating route locations",e.getCause());
+    private Fragment parsePosition(int pos) {
+        switch(pos) {
+            case 0:
+                return landing;
+            case 1:
+                return scheduling;
+            case 2:
+                return about;
+            default:
+                return null;
         }
     }
 
-    public void myLoc(View view){
-
-        ((AutoCompleteTextView)findViewById(R.id.start)).setText("My Location");
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, parsePosition(position))
+                .commit();
     }
+
+    public void onSectionAttached(int number) {
+        switch (number) {
+            case 1:
+                mTitle = getString(R.string.title_activity_main);
+                break;
+            case 2:
+                mTitle = getString(R.string.title_activity_schedule);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_activity_about);
+                break;
+        }
+    }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
+            // decide what to show in the action bar.
+            getMenuInflater().inflate(R.menu.main, menu);
+            restoreActionBar();
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_schedule) {
-            startActivity(new Intent(this,ScheduleAct.class));
-            return true;
-        }
-        else if(id == R.id.action_about) {
-            startActivity(new Intent(this,AboutAct.class));
+        if (id == R.id.action_settings) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -79,7 +79,7 @@ public class ScheduleItemAdder extends ActionBarActivity {
                             finish();
                         }
                         else {
-                            MainAct.generateToast(this,"Please enter a valid location!",Toast.LENGTH_LONG);
+                            MainAct.generateToast(this, "Please enter a valid location!", Toast.LENGTH_LONG);
                         }
                     } else {
                         MainAct.generateToast(this, "Please select a day(s)!", Toast.LENGTH_LONG);

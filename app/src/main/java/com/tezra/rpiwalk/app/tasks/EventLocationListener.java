@@ -11,11 +11,10 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.tezra.rpiwalk.app.acts.DirectionsAct;
-import com.tezra.rpiwalk.app.utils.Event;
 import com.tezra.rpiwalk.app.acts.MainAct;
+import com.tezra.rpiwalk.app.utils.Event;
 import com.tezra.rpiwalk.app.R;
 import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
 import org.osmdroid.util.GeoPoint;
@@ -37,7 +36,7 @@ public class EventLocationListener implements LocationListener {
             try {
                 ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
                 wp.add(new GeoPoint(curLoc));
-                wp.add(event.getLocation());
+                //wp.add(event.getLocation());
                 double d = new RoadRetrieverTask().execute(wp).get().mDuration;
                 tMap.put(event.name,d);
                 return  d;
@@ -59,7 +58,7 @@ public class EventLocationListener implements LocationListener {
 
             ArrayList<ParcelableGeoPoint> pList = new ArrayList<ParcelableGeoPoint>();
             pList.add(new ParcelableGeoPoint(new LocationRetrieverTask().execute("My Location", c).get()));
-            pList.add(new ParcelableGeoPoint(e.getLocation()));
+            //pList.add(new ParcelableGeoPoint(e.getLocation()));
 
             Intent i = new Intent(c,DirectionsAct.class);
             i.putExtra(MainAct.EXTRA_MSG,pList);
@@ -80,6 +79,10 @@ public class EventLocationListener implements LocationListener {
         }
     }
 
+    private int getDaySeconds(Time t) {
+        return t.hour * 60 * 60 + t.minute * 60 + t.second;
+    }
+
     public void checkEvents(){
         for(Event e : MainAct.eventList) {
             Time t = new Time();
@@ -87,10 +90,10 @@ public class EventLocationListener implements LocationListener {
             int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-2;
             if(day > 0 && day <= 4 && e.days[day]) {
                 double timeToEvent = getTimeToEvent(e);
+                double daySeconds = getDaySeconds(t);
                 if(timeToEvent > -1) {
-                    if ((e.getEventSeconds() - timeToEvent - timeDiffSeconds) <= (t.hour * 60 * 60 + t.minute * 60 + t.second) ) {
-                        MainAct.generateToast(c,String.valueOf(timeToEvent), Toast.LENGTH_LONG);
-                        int dif = (int) ((t.hour * 60 * 60 + t.minute * 60 + t.second) - (e.getEventSeconds() - timeToEvent - timeDiffSeconds));
+                    if (daySeconds >= (e.getEventSeconds() - timeToEvent - timeDiffSeconds)) {
+                        int dif = (int) (daySeconds - Math.abs(e.getEventSeconds() - timeToEvent - timeDiffSeconds));
                         buildNotification(e,dif);
                     }
                 }
