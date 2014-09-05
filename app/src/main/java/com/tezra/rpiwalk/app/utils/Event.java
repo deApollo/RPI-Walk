@@ -6,9 +6,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.Serializable;
 
 public class Event implements Serializable {
-    private double lat;
-    private double lon;
-
     public String name;
     public String location;
     public boolean [] days;
@@ -16,14 +13,12 @@ public class Event implements Serializable {
     public int minute;
 
 
-    public Event(String name, String location, boolean [] days, String hour, String minute, double lat, double lon) {
+    public Event(String name, String location, boolean [] days, String hour, String minute) {
         this.name = name;
         this.location = location;
         this.days = days;
         this.hour = Integer.parseInt(hour);
         this.minute = Integer.parseInt(minute);
-        this.lat = lat;
-        this.lon = lon;
     }
 
     private String parseDays(){
@@ -60,9 +55,5 @@ public class Event implements Serializable {
 
     public String getSubText() {
         return parseDays() + " - " + parseInt(hour) + ":" + parseInt(minute);
-    }
-
-    public LatLng getLocation() {
-        return new LatLng(lat,lon);
     }
 }

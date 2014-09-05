@@ -11,11 +11,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.tezra.rpiwalk.app.R;
-import com.tezra.rpiwalk.app.tasks.LocationRetrieverTask;
-
-import org.osmdroid.util.GeoPoint;
+import com.tezra.rpiwalk.app.tasks.LocationValidatorTask;
 
 
 public class ScheduleItemAdder extends ActionBarActivity {
@@ -68,11 +65,9 @@ public class ScheduleItemAdder extends ActionBarActivity {
             if (event_name.getText().length() != 0) {
                 if (location.getText().length() != 0) {
                     if (hasADaySelected(days)) {
-                        GeoPoint p = new LocationRetrieverTask().execute(location.getText().toString(),this).get();
-                        if (p != null) {
+                        if (new LocationValidatorTask().execute(location.getText().toString()).get()) {
                             Intent resultIntent = new Intent();
-                            String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute()),
-                                            String.valueOf(p.getLatitude()),String.valueOf(p.getLongitude())};
+                            String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute())};
                             resultIntent.putExtra(MainAct.EXTRA_MSG, data);
                             resultIntent.putExtra(MainAct.EXTRA_MSG_2,days);
                             setResult(Activity.RESULT_OK, resultIntent);
@@ -91,7 +86,7 @@ public class ScheduleItemAdder extends ActionBarActivity {
                 MainAct.generateToast(this, "Please enter an event name!", Toast.LENGTH_LONG);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }

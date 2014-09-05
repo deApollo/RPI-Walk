@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +15,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.tezra.rpiwalk.app.tasks.RouteRetrieverTask;
-import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
 import com.tezra.rpiwalk.app.R;
-import com.tezra.rpiwalk.app.tasks.LocationRetrieverTask;
-import org.osmdroid.util.GeoPoint;
-import java.util.ArrayList;
 
 
 public class LandingAct extends Fragment {
@@ -44,7 +38,7 @@ public class LandingAct extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.activity_landing,container,false);
+        View v = inflater.inflate(R.layout.fragment_landing,container,false);
 
         AutoCompleteTextView start = (AutoCompleteTextView) v.findViewById(R.id.start);
         AutoCompleteTextView finish = (AutoCompleteTextView) v.findViewById(R.id.finish);
@@ -57,6 +51,7 @@ public class LandingAct extends Fragment {
 
         final Button b = (Button)v.findViewById(R.id.my_loc);
 
+        /*
         b.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -67,6 +62,7 @@ public class LandingAct extends Fragment {
                 return false;
             }
         });
+        */
 
         return v;
     }
@@ -76,8 +72,9 @@ public class LandingAct extends Fragment {
             String from = ((AutoCompleteTextView) getView().findViewById(R.id.start)).getText().toString();
             String to = ((AutoCompleteTextView) getView().findViewById(R.id.finish)).getText().toString();
             if (validateText(from, to)) {
-                JsonObject route = new RouteRetrieverTask().execute(from,to).get();
-                if (route.get("status").getAsString().equals("OK")) {
+                JsonObject route = new RouteRetrieverTask().execute(from,to,getActivity().getApplicationContext()).get();
+                //route.get("info").getAsJsonObject().get("statuscode").getAsString().equals("0")
+                if (route != null) {
                     Intent dirInt = new Intent(getActivity(), DirectionsAct.class);
                     dirInt.putExtra(MainAct.EXTRA_MSG, route.toString());
                     startActivity(dirInt);
@@ -86,6 +83,7 @@ public class LandingAct extends Fragment {
             } else
                 MainAct.generateToast(getActivity(), "Please enter a location!", Toast.LENGTH_LONG);
         } catch (Exception e){
+            e.printStackTrace();
             Log.i("Error:","There was an issue validating route locations",e.getCause());
         }
     }

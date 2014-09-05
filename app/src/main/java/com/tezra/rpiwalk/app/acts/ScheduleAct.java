@@ -32,6 +32,7 @@ public class ScheduleAct extends Fragment {
     SimpleAdapter adapter;
 
     private void populateItemList(){
+        itemList.clear();
         for(Event e : MainAct.eventList) {
             Map<String,String> tempData = new HashMap<String,String>(2);
             tempData.put("main",e.getMainText());
@@ -43,7 +44,7 @@ public class ScheduleAct extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.activity_schedule,container,false);
+        View v = inflater.inflate(R.layout.fragment_schedule,container,false);
 
         populateItemList();
 
@@ -61,6 +62,7 @@ public class ScheduleAct extends Fragment {
                                 itemList.remove(myItemInt);
                                 MainAct.eventList.remove(myItemInt);
                                 adapter.notifyDataSetChanged();
+                                saveData();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -87,17 +89,6 @@ public class ScheduleAct extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        saveData();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        saveData();
-    }
 
     public void addItem(View view){
         startActivityForResult(new Intent(getActivity(),ScheduleItemAdder.class),0);
@@ -110,13 +101,14 @@ public class ScheduleAct extends Fragment {
             case(0) : {
                 if(resultCode == Activity.RESULT_OK) {
                     String [] result = data.getStringArrayExtra(MainAct.EXTRA_MSG);
-                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3],Double.valueOf(result[4]),Double.valueOf(result[5]));
+                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3]);
                     Map<String,String> tempData = new HashMap<String,String>(2);
                     tempData.put("main",e.getMainText());
                     tempData.put("sub",e.getSubText());
                     itemList.add(tempData);
                     MainAct.eventList.add(e);
                     adapter.notifyDataSetChanged();
+                    saveData();
                 }
             }
         }

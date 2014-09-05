@@ -12,13 +12,11 @@ import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
 import com.tezra.rpiwalk.app.acts.DirectionsAct;
 import com.tezra.rpiwalk.app.acts.MainAct;
 import com.tezra.rpiwalk.app.utils.Event;
 import com.tezra.rpiwalk.app.R;
-import com.tezra.rpiwalk.app.utils.ParcelableGeoPoint;
-import org.osmdroid.util.GeoPoint;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -29,15 +27,17 @@ public class EventLocationListener implements LocationListener {
     private HashMap<String,Double> tMap = new HashMap<String, Double>();
     private Context c;
 
+    private String getLocString(){
+        return "My Location";
+    }
+
     private double getTimeToEvent(Event event){
         if(tMap.containsKey(event.name))
             return tMap.get(event.name);
         else {
             try {
-                ArrayList<GeoPoint> wp = new ArrayList<GeoPoint>();
-                wp.add(new GeoPoint(curLoc));
-                //wp.add(event.getLocation());
-                double d = new RoadRetrieverTask().execute(wp).get().mDuration;
+                JsonObject data = new RouteRetrieverTask().execute(getLocString(),event.location,c).get();
+                double d = data.getAsJsonObject("route").get("legs").getAsJsonArray().get(0).getAsJsonObject().get("time").getAsDouble();
                 tMap.put(event.name,d);
                 return  d;
             } catch (Exception e) {
@@ -55,13 +55,9 @@ public class EventLocationListener implements LocationListener {
 
     private void buildNotification(Event e,int leaveTime){
         try {
-
-            ArrayList<ParcelableGeoPoint> pList = new ArrayList<ParcelableGeoPoint>();
-            pList.add(new ParcelableGeoPoint(new LocationRetrieverTask().execute("My Location", c).get()));
-            //pList.add(new ParcelableGeoPoint(e.getLocation()));
-
+            String s = new RouteRetrieverTask().execute(getLocString(),e.location,c).get().toString();
             Intent i = new Intent(c,DirectionsAct.class);
-            i.putExtra(MainAct.EXTRA_MSG,pList);
+            i.putExtra(MainAct.EXTRA_MSG,s);
             PendingIntent pI = PendingIntent.getActivity(c,e.minute,i,PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification n = new Notification.Builder(c)

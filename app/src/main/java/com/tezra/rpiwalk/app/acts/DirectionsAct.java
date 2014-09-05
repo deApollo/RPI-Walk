@@ -1,5 +1,6 @@
 package com.tezra.rpiwalk.app.acts;
 
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,6 +12,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -28,36 +30,6 @@ public class DirectionsAct extends ActionBarActivity {
 
     GoogleMap map;
 
-    private List<LatLng> decodePoly(String encoded) {
-        List<LatLng> poly = new ArrayList<LatLng>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng p = new LatLng((double) lat / 1E5, (double) lng / 1E5);
-            poly.add(p);
-        }
-        return poly;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,28 +40,33 @@ public class DirectionsAct extends ActionBarActivity {
         MapsInitializer.initialize(this);
 
         JsonObject j = (JsonObject) new JsonParser().parse(getIntent().getStringExtra(MainAct.EXTRA_MSG));
-        JsonArray routes = j.getAsJsonArray("routes");
-        JsonObject route = routes.get(0).getAsJsonObject();
-        JsonObject mainLeg = route.get("legs").getAsJsonArray().get(0).getAsJsonObject();
-        JsonArray steps = mainLeg.get("steps").getAsJsonArray();
+        JsonObject route = j.getAsJsonObject("route");
+        JsonArray legs = route.getAsJsonArray("legs");
+        JsonArray maneuvers = legs.get(0).getAsJsonArray();
+
+        PolylineOptions p = new PolylineOptions();
+        p.color(Color.BLUE);
 
         int stepNum = 1;
-        for(JsonElement step : steps) {
-            JsonObject jObjStep = step.getAsJsonObject();
-            JsonObject point = jObjStep.get("start_location").getAsJsonObject();
-            LatLng start = new LatLng(point.get("lat").getAsDouble(),point.get("lng").getAsDouble());
-            if(stepNum == 1)
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
-            MarkerOptions m = new MarkerOptions();
-            m.position(start); m.title("Step " + stepNum); m.snippet(Html.fromHtml(jObjStep.get("html_instructions").getAsString()).toString());
-            map.addMarker(m);
-            stepNum++;
-        }
+        for(JsonElement step : maneuvers) {
+            JsonObject currentStep = step.getAsJsonObject();
+            String narrative = currentStep.get("narrative").getAsString();
+            JsonObject point = currentStep.getAsJsonObject("startPoint");
+            LatLng startPoint = new LatLng(point.get("lat").getAsDouble(),point.get("lng").getAsDouble());
+            p.add(startPoint);
+            MarkerOptions pointOptions = new MarkerOptions();
+            if(stepNum == 1) {
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(startPoint, 18));
+                pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_icon));
+            }  else if(stepNum == maneuvers.size())
+                pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_icon));
+            else
+                pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.way_point_icon));
+            pointOptions.position(startPoint); pointOptions.title("Step " + stepNum); pointOptions.snippet(narrative);
 
-        List<LatLng> lis = decodePoly(route.get("overview_polyline").getAsString());
-        PolylineOptions p = new PolylineOptions();
-        for(LatLng l : lis) {
-            p.add(l);
+            map.addMarker(pointOptions);
+
+            stepNum++;
         }
 
         map.addPolyline(p);

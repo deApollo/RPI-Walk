@@ -63,5 +63,5 @@
         android:layout_alignTop="@+id/start"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/location_icon" />
+        android:background="#ffffaa61" />
 </RelativeLayout>
