@@ -42,10 +42,14 @@ public class DirectionsAct extends ActionBarActivity {
         JsonObject j = (JsonObject) new JsonParser().parse(getIntent().getStringExtra(MainAct.EXTRA_MSG));
         JsonObject route = j.getAsJsonObject("route");
         JsonArray legs = route.getAsJsonArray("legs");
-        JsonArray maneuvers = legs.get(0).getAsJsonArray();
+        JsonArray maneuvers = legs.get(0).getAsJsonObject().get("maneuvers").getAsJsonArray();
 
         PolylineOptions p = new PolylineOptions();
         p.color(Color.BLUE);
+        JsonObject shape = route.getAsJsonObject("shape");
+        JsonArray shapePoints = shape.getAsJsonArray("shapePoints");
+        for(int i = 0; i < shapePoints.size()-1; i+=2)
+            p.add(new LatLng(shapePoints.get(i).getAsDouble(),shapePoints.get(i+1).getAsDouble()));
 
         int stepNum = 1;
         for(JsonElement step : maneuvers) {
@@ -53,7 +57,6 @@ public class DirectionsAct extends ActionBarActivity {
             String narrative = currentStep.get("narrative").getAsString();
             JsonObject point = currentStep.getAsJsonObject("startPoint");
             LatLng startPoint = new LatLng(point.get("lat").getAsDouble(),point.get("lng").getAsDouble());
-            p.add(startPoint);
             MarkerOptions pointOptions = new MarkerOptions();
             if(stepNum == 1) {
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(startPoint, 18));

@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,22 +48,32 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
         return  locObj.get("lat").getAsString()+","+locObj.get("lng").getAsString();
     }
 
-    private String parseUserInput(String s){
+    private String parseUserInput(String s,Context c){
         if(s.equals("My Location")) {
             Location l = retrieveUserLocation();
             return String.valueOf(l.getLatitude()) + ","+ String.valueOf(l.getLongitude());
-        } else
-            return geocodeLocation(s.replaceAll(" ", "+"));
+        } else {
+            try {
+                String locStr = new DatabaseQueryTask().execute(s, c).get();
+                if (locStr != null)
+                    return locStr;
+                else
+                    return geocodeLocation(s.replaceAll(" ", "+"));
+            } catch (Exception e) {
+                Log.e("ERROR", "There was an error executing a database query task");
+                return geocodeLocation(s.replaceAll(" ","+"));
+            }
+        }
     }
 
     private String mQuestLocationsToUrlStr(String from, String to) {
-        return "http://open.mapquestapi.com/directions/v2/route?key=Fmjtd%7Cluur2h6rl1%2C7s%3Do5-9w2w9a&from=" + from + "&to=" + to + "&routeType=pedestrian&outFormat=json&ambiguities=ignore";
+        return "https://open.mapquestapi.com/directions/v2/route?key=Fmjtd%7Cluur2h6rl1%2C7s%3Do5-9w2w9a&from=" + from + "&to=" + to + "&routeType=pedestrian&outFormat=json&ambiguities=ignore&shapeFormat=raw&fullShape=true";
     }
 
     public JsonObject doInBackground(Object... params) {
         c = (Context) params[2];
-        String start = parseUserInput((String) params[0]);
-        String end = parseUserInput((String) params[1]);
+        String start = parseUserInput((String) params[0],c);
+        String end = parseUserInput((String) params[1],c);
 
         return readJSONFromURL(mQuestLocationsToUrlStr(start,end)).getAsJsonObject();
     }

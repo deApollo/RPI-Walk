@@ -65,7 +65,7 @@ public class ScheduleItemAdder extends ActionBarActivity {
             if (event_name.getText().length() != 0) {
                 if (location.getText().length() != 0) {
                     if (hasADaySelected(days)) {
-                        if (new LocationValidatorTask().execute(location.getText().toString()).get()) {
+                        if (new LocationValidatorTask().execute(location.getText().toString(),getApplicationContext()).get()) {
                             Intent resultIntent = new Intent();
                             String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute())};
                             resultIntent.putExtra(MainAct.EXTRA_MSG, data);

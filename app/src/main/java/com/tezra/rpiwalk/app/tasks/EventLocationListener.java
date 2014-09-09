@@ -25,6 +25,7 @@ public class EventLocationListener implements LocationListener {
     private NotificationManager m;
     private int timeDiffSeconds = 5;
     private HashMap<String,Double> tMap = new HashMap<String, Double>();
+    private HashMap<String,Boolean> aMap = new HashMap<String, Boolean>();
     private Context c;
 
     private String getLocString(){
@@ -46,11 +47,13 @@ public class EventLocationListener implements LocationListener {
         }
     }
 
-    private String parseSeconds(int seconds){
+    private String parseSeconds(int total_seconds){
+        int minutes = total_seconds / 60;
+        int seconds = total_seconds - minutes*60;
         if(seconds > 60)
-            return String.valueOf(seconds%60) + "m " + String.valueOf(seconds/60 - seconds%60*60) + "s";
+            return minutes + "m " + seconds + "s";
         else
-            return String.valueOf(seconds) + "s";
+            return seconds + "s";
     }
 
     private void buildNotification(Event e,int leaveTime){
@@ -81,6 +84,8 @@ public class EventLocationListener implements LocationListener {
 
     public void checkEvents(){
         for(Event e : MainAct.eventList) {
+            if(!aMap.containsKey(e.name))
+                aMap.put(e.name,false);
             Time t = new Time();
             t.setToNow();
             int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-2;
@@ -88,10 +93,12 @@ public class EventLocationListener implements LocationListener {
                 double timeToEvent = getTimeToEvent(e);
                 double daySeconds = getDaySeconds(t);
                 if(timeToEvent > -1) {
-                    if (daySeconds >= (e.getEventSeconds() - timeToEvent - timeDiffSeconds)) {
+                    if (daySeconds >= (e.getEventSeconds() - timeToEvent - timeDiffSeconds) & daySeconds < e.getEventSeconds() & !aMap.get(e.name)) {
                         int dif = (int) (daySeconds - Math.abs(e.getEventSeconds() - timeToEvent - timeDiffSeconds));
                         buildNotification(e,dif);
-                    }
+                        aMap.put(e.name,true);
+                    } else
+                        aMap.put(e.name,false);
                 }
             }
         }

@@ -63,5 +63,5 @@
         android:layout_alignTop="@+id/start"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="#ffffaa61" />
+        android:background="#ffff0010" />
 </RelativeLayout>

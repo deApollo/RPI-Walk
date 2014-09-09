@@ -1,6 +1,8 @@
 package com.tezra.rpiwalk.app.tasks;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,6 +36,15 @@ public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
 
     public Boolean doInBackground(Object... args){
         String str = (String)args[0];
+        Context c = (Context) args[1];
+
+        try {
+            if(new DatabaseQueryTask().execute(str,c).get() != null)
+                return true;
+        } catch (Exception e) {
+            Log.e("ERROR", "There was an error executing a database query task");
+        }
+
         JsonObject raw = readJSONFromURL(locationToUrlStr(str)).getAsJsonObject();
         if(raw.get("results").getAsJsonArray().size() > 0)
             return true;
