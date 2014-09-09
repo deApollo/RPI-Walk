@@ -16,9 +16,6 @@ import java.io.OutputStream;
 
 public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
 
-    private static String DB_PATH = "/data/data/com.tezra.rpiwalk.app/databases/";
-    private static String DB_NAME = "rpi-locations.db";
-
     SQLiteDatabase db;
     Context c;
 
@@ -26,12 +23,14 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
         String query = (String)args[0];
         c = (Context)args[1];
 
+        String DB_PATH = c.getFilesDir().getPath() + "rpi_locations.db";
+
         try {
-            db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+            db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             try {
                 InputStream resourceDb = c.getResources().openRawResource(R.raw.rpi_locations);
-                OutputStream readableDb = new FileOutputStream(DB_PATH + DB_NAME);
+                OutputStream readableDb = new FileOutputStream(DB_PATH);
                 byte[] buffer = new byte[1024];
                 int length;
                 while ((length = resourceDb.read(buffer)) > 0) {
@@ -46,7 +45,7 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
         }
 
         try {
-            db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null,SQLiteDatabase.OPEN_READONLY);
+            db = SQLiteDatabase.openDatabase(DB_PATH, null,SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             Log.e("ERROR", "Error opening external database");
         }
@@ -56,6 +55,7 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
         final String final_query = "name="+query;
 
         Cursor result = db.query(table,columns,final_query,null,null,null,null,null);
+
         if(result.getColumnCount() == 2) {
             String latlng = String.valueOf(result.getDouble(0)) + "," + String.valueOf(result.getDouble(1));
             result.close();
