@@ -42,8 +42,9 @@ public class DirectionsAct extends ActionBarActivity {
 
         //Get the GoogleMap object from the map fragment
         map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-
-        MapsInitializer.initialize(this);
+        map.setIndoorEnabled(true);
+        map.setMyLocationEnabled(true);
+        map.setBuildingsEnabled(true);
 
         //Get the Json data for the route from the supplied intent
         JsonObject j = (JsonObject) new JsonParser().parse(getIntent().getStringExtra(MainAct.EXTRA_MSG));

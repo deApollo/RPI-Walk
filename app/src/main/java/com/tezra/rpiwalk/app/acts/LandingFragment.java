@@ -84,7 +84,7 @@ public class LandingFragment extends Fragment {
             String to = ((AutoCompleteTextView) getView().findViewById(R.id.finish)).getText().toString();
             if (validateText(from, to)) { //If they aren't empty
                 //Retrieve the JsonObject containing the route data
-                JsonObject route = new RouteRetrieverTask().execute(from,to,getActivity().getApplicationContext()).get();
+                JsonObject route = new RouteRetrieverTask().execute(from,to,getActivity().getBaseContext()).get();
                 //route.get("info").getAsJsonObject().get("statuscode").getAsString().equals("0")
                 if (route != null) { //If the locations entered are valid and the route exists
                     //Start the map activity by passing in the route JsonObject

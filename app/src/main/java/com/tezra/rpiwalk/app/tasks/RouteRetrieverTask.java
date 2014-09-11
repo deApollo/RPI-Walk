@@ -65,7 +65,7 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
             try {
                 //Otherwise, first attempt to look the location up in the database
                 //If the lookup fails, just geocode the location
-                String locStr = new DatabaseQueryTask().execute(s, c).get();
+                String locStr = new DatabaseQuery().doQuery(s,c);
                 if (locStr != null)
                     return locStr;
                 else

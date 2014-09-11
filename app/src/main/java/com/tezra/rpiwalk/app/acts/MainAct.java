@@ -89,31 +89,29 @@ public class MainAct extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //MAKE SURE THIS IS CALLED BEFORE YOU SET THE CONTENT VIEW!!!!!
+        initializeFragments(); //Initialize all the fragments
+
         setContentView(R.layout.activity_main);
 
         loadData(); //Load the event data
 
-        initializeFragments(); //Initialize all the fragments
-
         startEventTracker(); //Start the EventTrackerService
 
-
         //Find the navigation drawer
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment.setUp( R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
         //Set the starting fragment to the LandingFragment
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, landing)
-                .commit();
+        fragmentManager.beginTransaction().replace(R.id.container, landing).commit();
 
         mTitle = getTitle(); //Set the title
+
+
     }
 
     //Return a fragment based on the position of the selected item in the navigation drawer
@@ -127,6 +125,20 @@ public class MainAct extends Activity
                 return about;
             default:
                 return null;
+        }
+    }
+
+    public void onSectionAttached(int number) {
+        switch (number) {
+            case 1:
+                mTitle = getString(R.string.title_activity_main);
+                break;
+            case 2:
+                mTitle = getString(R.string.title_activity_schedule);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_activity_about);
+                break;
         }
     }
 

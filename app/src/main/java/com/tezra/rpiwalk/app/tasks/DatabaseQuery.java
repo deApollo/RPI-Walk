@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
+public class DatabaseQuery {
 
     /*
     This task queries the rpi_locations.db as to whether the supplied location exists in the database.
@@ -22,11 +22,10 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
      */
 
     SQLiteDatabase db;
-    Context c;
 
-    public String doInBackground(Object... args){
-        String query = (String)args[0];
-        c = (Context)args[1];
+    public DatabaseQuery(){}
+
+    public String doQuery(String query,Context c){
 
         String DB_PATH = c.getFilesDir().getPath() + "rpi_locations.db";
 
@@ -54,16 +53,20 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
         //Set up the strings for the query, then do the query
         final String table = "locations";
         final String [] columns = {"latitude","longitude"};
-        final String final_query = "name="+query;
+        final String final_query = "name=\""+query+"\"";
 
         Cursor result = db.query(table,columns,final_query,null,null,null,null,null);
+        result.moveToFirst();
 
         //Parse the query result to see if it matches the expected format, if it does, return the parsed data, otherwise return null
         if(result.getColumnCount() == 2) {
-            String latlng = String.valueOf(result.getDouble(0)) + "," + String.valueOf(result.getDouble(1));
+
+            String lat = String.valueOf(result.getDouble(0));
+            String lon = String.valueOf(result.getDouble(1));
+
             result.close();
             db.close();
-            return latlng;
+            return lat + ',' + lon;
         }
         else {
             result.close();
