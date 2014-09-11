@@ -16,12 +16,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class EventTrackerService extends IntentService {
-    public static final String BROADCAST_ACTION = "RPI Walk - Event Service";
-    public static final int REFRESH_INTERVAL = 60000;
-    private final Handler mHandler = new Handler();
+
+    public static final String BROADCAST_ACTION = "RPI Walk - Event Service"; //"Title" of the service
+    public static final int REFRESH_INTERVAL = 60000; //Number if miliseconds between runs of mTask
+    private final Handler mHandler = new Handler(); //Handler which handles running mTask
     private Runnable mTask = new Runnable() {
         @Override
-        public void run() {
+        public void run() { //The runnable that calls checkEvents()
             lis.checkEvents();
             mHandler.postDelayed(mTask,REFRESH_INTERVAL);
         }
@@ -45,6 +46,7 @@ public class EventTrackerService extends IntentService {
 
     }
 
+    //When this service starts, set up the EventLocationListener and start the loop to call CheckEvents()
     @Override
     public int onStartCommand(Intent i, int flags, int startId) {
         m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -58,6 +60,7 @@ public class EventTrackerService extends IntentService {
         return START_STICKY;
     }
 
+    //When this service stops, stop getting location updates and stop the repeating task.
     @Override
     public void onDestroy() {
         super.onDestroy();

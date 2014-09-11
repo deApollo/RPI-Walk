@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.tezra.rpiwalk.app.R;
 
 
-public class AboutAct extends Fragment {
+public class AboutFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

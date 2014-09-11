@@ -6,14 +6,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 import com.tezra.rpiwalk.app.R;
@@ -27,35 +24,42 @@ import java.util.ArrayList;
 public class MainAct extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    //Strings used as keys when passing intent extras between activities
     public final static String EXTRA_MSG = "com.tezra.rpiwalk.MSG";
     public final static String EXTRA_MSG_2 = "com.tezra.rpiwalk.MSG_2";
+
+    //A list of the current events in the users schedule
     public static ArrayList<Event> eventList = new ArrayList<Event>();
 
+    //Object to hold the navigation drawer
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
+    //Current title, changed whenever the fragment is changed
     private CharSequence mTitle;
 
-    private AboutAct about;
-    private LandingAct landing;
-    private ScheduleAct scheduling;
+    //Objects to hold each fragment used by the app
+    private AboutFragment about;
+    private LandingFragment landing;
+    private ScheduleFragment scheduling;
 
+    //Functions to handle button clicks in the main activity
     public void myLoc(View v) {
         landing.myLoc(v);
     }
-
     public void findRoute(View v) {
         landing.findRoute(v);
     }
-
     public void addItem(View v){
         scheduling.addItem(v);
     }
 
+    //A static function that generates a toast
     public static void generateToast(Context c, CharSequence text, int duration){
         Toast toast = Toast.makeText(c,text,duration);
         toast.show();
     }
 
+    //Function that loads the binary event data file
     private void loadData(){
         File file = new File(this.getFilesDir(),"data.dat");
         try {
@@ -69,43 +73,50 @@ public class MainAct extends Activity
         }
     }
 
+    //Function that stats the EventTrackerService
     private void startEventTracker() {
         Intent mServiceIntent = new Intent(this, EventTrackerService.class);
         startService(mServiceIntent);
     }
 
+    //Function that initializes the main fragments
     private void initializeFragments() {
-        about = new AboutAct();
-        landing = new LandingAct();
-        scheduling = new ScheduleAct();
+        about = new AboutFragment();
+        landing = new LandingFragment();
+        scheduling = new ScheduleFragment();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        initializeFragments();
-
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, landing)
-                .commit();
+        loadData(); //Load the event data
 
-        loadData();
-        startEventTracker();
+        initializeFragments(); //Initialize all the fragments
 
+        startEventTracker(); //Start the EventTrackerService
+
+
+        //Find the navigation drawer
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        //Set the starting fragment to the LandingFragment
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, landing)
+                .commit();
+
+        mTitle = getTitle(); //Set the title
     }
 
+    //Return a fragment based on the position of the selected item in the navigation drawer
     private Fragment parsePosition(int pos) {
         switch(pos) {
             case 0:
@@ -119,6 +130,7 @@ public class MainAct extends Activity
         }
     }
 
+    //Function that actually handles the selection of items in the navigation drawer
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -128,20 +140,7 @@ public class MainAct extends Activity
                 .commit();
     }
 
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_activity_main);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_activity_schedule);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_activity_about);
-                break;
-        }
-    }
-
+    //Code the handle action bar
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -150,6 +149,7 @@ public class MainAct extends Activity
     }
 
 
+    //Code to handle options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {

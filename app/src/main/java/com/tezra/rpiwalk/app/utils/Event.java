@@ -6,6 +6,10 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.Serializable;
 
 public class Event implements Serializable {
+    /*
+    Serializable event class that stores all the data about a user entered event.
+     */
+
     public String name;
     public String location;
     public boolean [] days;

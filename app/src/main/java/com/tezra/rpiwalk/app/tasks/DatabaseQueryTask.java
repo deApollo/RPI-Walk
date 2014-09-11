@@ -16,6 +16,11 @@ import java.io.OutputStream;
 
 public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
 
+    /*
+    This task queries the rpi_locations.db as to whether the supplied location exists in the database.
+    If the entry exists, the task returns a string containing the LatLnt pair for use in the RouteRetrieverTask and LocationValidatorTask
+     */
+
     SQLiteDatabase db;
     Context c;
 
@@ -26,9 +31,10 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
         String DB_PATH = c.getFilesDir().getPath() + "rpi_locations.db";
 
         try {
-            db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
+            db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY); //Attempt to open the databae
+        } catch (SQLiteException e) { //The database doesn't yet exist in a readable location
             try {
+                //Write the database from the resource directory to a directory from which it can be successfully read from, then open it.
                 InputStream resourceDb = c.getResources().openRawResource(R.raw.rpi_locations);
                 OutputStream readableDb = new FileOutputStream(DB_PATH);
                 byte[] buffer = new byte[1024];
@@ -39,23 +45,20 @@ public class DatabaseQueryTask extends AsyncTask<Object,Void,String> {
                 readableDb.flush();
                 readableDb.close();
                 resourceDb.close();
+                db = SQLiteDatabase.openDatabase(DB_PATH, null,SQLiteDatabase.OPEN_READONLY);
             } catch (IOException z) {
                 Log.e("ERROR", "Error loading writing database");
             }
         }
 
-        try {
-            db = SQLiteDatabase.openDatabase(DB_PATH, null,SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
-            Log.e("ERROR", "Error opening external database");
-        }
-
+        //Set up the strings for the query, then do the query
         final String table = "locations";
         final String [] columns = {"latitude","longitude"};
         final String final_query = "name="+query;
 
         Cursor result = db.query(table,columns,final_query,null,null,null,null,null);
 
+        //Parse the query result to see if it matches the expected format, if it does, return the parsed data, otherwise return null
         if(result.getColumnCount() == 2) {
             String latlng = String.valueOf(result.getDouble(0)) + "," + String.valueOf(result.getDouble(1));
             result.close();

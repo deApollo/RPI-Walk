@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ScheduleAct extends Fragment {
+public class ScheduleFragment extends Fragment {
 
 
-    List<Map<String,String>> itemList = new ArrayList<Map<String,String>>();
-    SimpleAdapter adapter;
+    List<Map<String,String>> itemList = new ArrayList<Map<String,String>>(); //Data structure to store the actual contents of the ListView
+    SimpleAdapter adapter; //The adapter that controls the ListView
 
+    //Function that populates the ListView from the data read from file in the MainAct
     private void populateItemList(){
         itemList.clear();
         for(Event e : MainAct.eventList) {
@@ -46,12 +47,14 @@ public class ScheduleAct extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_schedule,container,false);
 
-        populateItemList();
+        populateItemList(); //Populate the eventList
 
+        //Get the list view and set up its adapter
         ListView lis = (ListView) v.findViewById(R.id.item_list);
         adapter = new SimpleAdapter(getActivity(), itemList,android.R.layout.simple_list_item_2,new String [] {"main","sub"},new int [] {android.R.id.text1,android.R.id.text2});
         lis.setAdapter(adapter);
 
+        //Set up the listener so that items can be removed
         final ListView l = lis;
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> myAdapter, View myView,final int myItemInt, long mylng) {
@@ -76,6 +79,7 @@ public class ScheduleAct extends Fragment {
         return v;
     }
 
+    //Function to save the event data to a binary file
     private void saveData(){
         File file = new File(getActivity().getFilesDir(),"data.dat");
         try{
@@ -89,25 +93,35 @@ public class ScheduleAct extends Fragment {
         }
     }
 
-
+    //Function that starts the ScheduleItemAdder activity
     public void addItem(View view){
         startActivityForResult(new Intent(getActivity(),ScheduleItemAdder.class),0);
     }
 
+    //Function that parses the results from the ScheduleItemAdder activity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case(0) : {
-                if(resultCode == Activity.RESULT_OK) {
+                if(resultCode == Activity.RESULT_OK) { //If the activity returned successfully
+                    //Parse the results into an event
                     String [] result = data.getStringArrayExtra(MainAct.EXTRA_MSG);
                     Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3]);
+
+                    //Add the event to the list of events
                     Map<String,String> tempData = new HashMap<String,String>(2);
                     tempData.put("main",e.getMainText());
                     tempData.put("sub",e.getSubText());
                     itemList.add(tempData);
+
+                    //Add the event to the data in the MainAct
                     MainAct.eventList.add(e);
+
+                    //Update the adapter
                     adapter.notifyDataSetChanged();
+
+                    //Save the new data
                     saveData();
                 }
             }

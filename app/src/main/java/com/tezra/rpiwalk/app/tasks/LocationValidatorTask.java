@@ -16,6 +16,12 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
 
+    /*
+    This task validates whether a user entered location is actually a valid location.
+    It uses the Google Geocoding API.
+     */
+
+    //Function to read a Google Gson JsonElement from a Https web connection
     private JsonElement readJSONFromURL(String url) {
         try {
             URL u = new URL(url);
@@ -28,16 +34,19 @@ public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
         }
     }
 
+    //Function to assemble the request string for the Google Geocoding API
     private String locationToUrlStr(String loc){
         loc = loc.replaceAll(" ","+");
         loc = "https://maps.googleapis.com/maps/api/geocode/json?address=" + loc + ",troy,ny&key=AIzaSyBLKaT1Lc3zGQ_ORvqWPtIxlWl06a0je6Q";
         return loc;
     }
 
+    //Function that is run when the task is started
     public Boolean doInBackground(Object... args){
         String str = (String)args[0];
         Context c = (Context) args[1];
 
+        //If the location entered exists in the database, just return true
         try {
             if(new DatabaseQueryTask().execute(str,c).get() != null)
                 return true;
@@ -45,6 +54,7 @@ public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
             Log.e("ERROR", "There was an error executing a database query task");
         }
 
+        //If the location was not found in the database, attempt to Geocode it
         JsonObject raw = readJSONFromURL(locationToUrlStr(str)).getAsJsonObject();
         if(raw.get("results").getAsJsonArray().size() > 0)
             return true;
