@@ -37,11 +37,13 @@
         </activity>
         <activity
             android:name=".acts.DirectionsAct"
-            android:label="@string/title_activity_directions" >
+            android:label="@string/title_activity_directions"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".acts.ScheduleItemAdder"
-            android:label="@string/title_activity_schedule_item_adder" >
+            android:label="@string/title_activity_schedule_item_adder"
+            android:screenOrientation="portrait" >
         </activity>
         <service
             android:name=".tasks.EventTrackerService"

@@ -26,6 +26,7 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
      */
 
     private Context c;
+    private boolean userLocationSupplied;
 
     //Function that reads Json from a Https web connection
     private JsonElement readJSONFromURL(String url) {
@@ -44,7 +45,10 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
     private Location retrieveUserLocation(){
         LocationManager m = (LocationManager) c.getSystemService(c.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE); criteria.setAltitudeRequired(false); criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
         return m.getLastKnownLocation(m.getBestProvider(criteria,true));
     }
 
@@ -59,20 +63,24 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
     //Function to handle the input location strings
     private String handleInput(String s, Context c){
         if(s.equals("My Location")) { //If the user is using their location, retrieve it
-            Location l = retrieveUserLocation();
-            return String.valueOf(l.getLatitude()) + ","+ String.valueOf(l.getLongitude());
+            Location userLoc = retrieveUserLocation();
+            return userLoc.getLatitude() + "," + userLoc.getLongitude();
         } else {
-            try {
-                //Otherwise, first attempt to look the location up in the database
-                //If the lookup fails, just geocode the location
-                String locStr = new DatabaseQuery().doQuery(s,c);
-                if (locStr != null)
-                    return locStr;
-                else
+            if(userLocationSupplied)
+                return s;
+            else {
+                try {
+                    //Otherwise, first attempt to look the location up in the database
+                    //If the lookup fails, just geocode the location
+                    String locStr = new DatabaseQuery(c).doQuery(s);
+                    if (locStr != null)
+                        return locStr;
+                    else
+                        return geocodeLocation(s.replaceAll(" ", "+"));
+                } catch (Exception e) {
+                    Log.e("ERROR", "There was an error executing a database query task");
                     return geocodeLocation(s.replaceAll(" ", "+"));
-            } catch (Exception e) {
-                Log.e("ERROR", "There was an error executing a database query task");
-                return geocodeLocation(s.replaceAll(" ","+"));
+                }
             }
         }
     }
@@ -84,6 +92,7 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
 
     //Function that runs when the task is initiated
     public JsonObject doInBackground(Object... params) {
+        userLocationSupplied = params.length > 3;
         c = (Context) params[2];
         String start = handleInput((String) params[0], c);
         String end = handleInput((String) params[1], c);

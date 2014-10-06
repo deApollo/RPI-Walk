@@ -4,5 +4,5 @@
     android:layout_height="match_parent"
     android:choiceMode="singleChoice"
     android:dividerHeight="0dp"
-    android:background="#cccc3528"
+    android:background="#a3000000"
     tools:context="com.tezra.rpiwalk.app.acts.NavigationDrawerFragment" />

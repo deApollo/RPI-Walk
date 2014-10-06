@@ -18,7 +18,7 @@ import java.util.TimerTask;
 public class EventTrackerService extends IntentService {
 
     public static final String BROADCAST_ACTION = "RPI Walk - Event Service"; //"Title" of the service
-    public static final int REFRESH_INTERVAL = 60000; //Number if miliseconds between runs of mTask
+    public static final int REFRESH_INTERVAL = 120000; //Number if miliseconds between runs of mTask
     private final Handler mHandler = new Handler(); //Handler which handles running mTask
     private Runnable mTask = new Runnable() {
         @Override

@@ -48,7 +48,7 @@ public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
 
         //If the location entered exists in the database, just return true
         try {
-            if(new DatabaseQuery().doQuery(str,c) != null)
+            if(new DatabaseQuery(c).doQuery(str) != null)
                 return true;
         } catch (Exception e) {
             Log.e("ERROR", "There was an error executing a database query task");

@@ -45,7 +45,7 @@ public class EventLocationListener implements LocationListener {
 
     //Function that returns the string to be used as the users location in the RouteRetrieverTask
     private String getLocString(){
-        return "My Location";
+        return curLoc.getLatitude() + "," + curLoc.getLongitude();
     }
 
     //Function that returns the time it takes to get to a specified event
@@ -56,7 +56,7 @@ public class EventLocationListener implements LocationListener {
         else { //Look up the time to the event from the route
             try {
                 //Retrieve the route data from the RouteRetrieverTask
-                JsonObject data = new RouteRetrieverTask().execute(getLocString(),event.location,c).get();
+                JsonObject data = new RouteRetrieverTask().execute(getLocString(),event.location,c,true).get();
                 //Get the time taken during the route
                 double d = data.getAsJsonObject("route").get("legs").getAsJsonArray().get(0).getAsJsonObject().get("time").getAsDouble();
                 timeToEventMap.put(event.name,d); //Add the data to the time map

@@ -10,7 +10,7 @@
     android:clickable="false"
     android:focusable="false"
     android:id="@+id/layout"
-    android:background="@drawable/background_main_page">
+    android:background="#ffe5e5e5">
 
     <AutoCompleteTextView
         android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
         android:layout_alignParentStart="true"
         android:singleLine="true"
         android:textColor="#ffffff"
-        android:background="#23ffffff" />
+        android:background="@android:color/darker_gray" />
 
     <AutoCompleteTextView
         android:layout_width="wrap_content"
@@ -36,24 +36,26 @@
         android:hint="@string/finish_string"
         android:singleLine="true"
         android:minWidth="200dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/my_loc"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:maxLines="1"
         android:textColor="#ffffff"
-        android:background="#23ffffff" />
+        android:background="@android:color/darker_gray"
+        android:layout_above="@+id/find"
+        android:layout_toLeftOf="@+id/my_loc"
+        android:layout_toStartOf="@+id/my_loc"
+        android:layout_marginBottom="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="@string/find_route_button"
         android:id="@+id/find"
         android:onClick="findRoute"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/finish"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/find_route_button" />
 
     <Button
         android:layout_width="40dp"
@@ -63,5 +65,15 @@
         android:layout_alignTop="@+id/start"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="#ffff0010" />
+        android:background="@drawable/location_icon" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/im"
+        android:background="@drawable/rpiwalk_icon_large"
+        android:layout_above="@+id/start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp" />
+
 </RelativeLayout>

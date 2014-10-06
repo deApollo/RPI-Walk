@@ -23,12 +23,8 @@ public class DatabaseQuery {
 
     SQLiteDatabase db;
 
-    public DatabaseQuery(){}
-
-    public String doQuery(String query,Context c){
-
+    public DatabaseQuery(Context c){
         String DB_PATH = c.getFilesDir().getPath() + "rpi_locations.db";
-
         try {
             db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY); //Attempt to open the databae
         } catch (SQLiteException e) { //The database doesn't yet exist in a readable location
@@ -49,6 +45,9 @@ public class DatabaseQuery {
                 Log.e("ERROR", "Error loading writing database");
             }
         }
+    }
+
+    public String doQuery(String query){
 
         //Set up the strings for the query, then do the query
         final String table = "locations";
