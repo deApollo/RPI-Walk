@@ -86,8 +86,11 @@ public class DirectionsAct extends ActionBarActivity {
                 pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_icon));
                 String time = parseTime(route.get("formattedTime").getAsString());
                 narrative += "splithere909"+time;
-            }  else if(stepNum == maneuvers.size())
+            }  else if(stepNum == maneuvers.size()) {
                 pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_icon));
+                narrative = "Arrive at destination!";
+                titleStr = "Final Step";
+            }
             else
                 pointOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.way_point_icon));
 
@@ -113,10 +116,6 @@ public class DirectionsAct extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 }

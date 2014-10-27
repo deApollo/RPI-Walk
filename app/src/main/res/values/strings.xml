@@ -23,5 +23,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
+    <string name="pref_key_refresh_interval">Enter the time between event checks</string>
+    <string name="pref_key_seconds_early">Enter how many seconds you would like to be early</string>
 
 </resources>

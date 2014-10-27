@@ -66,8 +66,10 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
             Location userLoc = retrieveUserLocation();
             return userLoc.getLatitude() + "," + userLoc.getLongitude();
         } else {
-            if(userLocationSupplied)
+            if(userLocationSupplied) {
+                userLocationSupplied = false;
                 return s;
+            }
             else {
                 try {
                     //Otherwise, first attempt to look the location up in the database

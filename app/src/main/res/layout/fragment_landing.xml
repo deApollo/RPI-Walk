@@ -55,7 +55,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
-        android:background="@drawable/find_route_button" />
+        android:text="Find Route"/>
 
     <Button
         android:layout_width="40dp"

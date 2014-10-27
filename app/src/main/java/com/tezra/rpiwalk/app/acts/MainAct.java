@@ -122,6 +122,8 @@ public class MainAct extends Activity
             case 1:
                 return scheduling;
             case 2:
+                return new SettingsFragment();
+            case 3:
                 return about;
             default:
                 return null;
@@ -137,8 +139,10 @@ public class MainAct extends Activity
                 mTitle = getString(R.string.title_activity_schedule);
                 break;
             case 3:
-                mTitle = getString(R.string.title_activity_about);
+                mTitle = "Settings";
                 break;
+            case 4:
+                mTitle = getString(R.string.title_activity_about);
         }
     }
 
@@ -177,13 +181,6 @@ public class MainAct extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 }

@@ -60,7 +60,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    private String [] drawerElements = {"Directions","Schedule","About"};
+    private String [] drawerElements = {"Directions","Schedule","Settings","About"};
 
     public NavigationDrawerFragment() {
     }
