@@ -3,13 +3,17 @@
     <PreferenceCategory
         android:title="Settings"
         android:key="pref_key_settings">
-        <EditTextPreference
+        <ListPreference
             android:key="pref_key_refresh_interval"
             android:summary="@string/pref_key_refresh_interval"
-            android:defaultValue="500 second intervals"/>
-        <EditTextPreference
-            android:key="pref_key_seconds_early"
+            android:entries="@array/settings_entries_array"
+            android:entryValues="@array/settings_values_array"
+            android:defaultValue="@string/pref_default_value"/>
+        <ListPreference
+            android:key="pref_key_minute_early"
             android:summary="@string/pref_key_seconds_early"
-            android:defaultValue="500 seconds early"/>
+            android:entries="@array/settings_entries_array"
+            android:entryValues="@array/settings_values_array"
+            android:defaultValue="@string/pref_default_value"/>
     </PreferenceCategory>
 </PreferenceScreen>

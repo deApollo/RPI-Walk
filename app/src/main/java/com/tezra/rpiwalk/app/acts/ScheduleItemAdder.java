@@ -13,14 +13,45 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import com.tezra.rpiwalk.app.R;
 import com.tezra.rpiwalk.app.tasks.LocationValidatorTask;
+import com.tezra.rpiwalk.app.utils.Event;
 
 
 public class ScheduleItemAdder extends ActionBarActivity {
+
+    private Event e;
+    private boolean isEditing;
+
+    private void setFromEvent(Event e){
+        EditText event_name = (EditText) findViewById(R.id.event_name);
+        event_name.setText(e.name);
+        EditText location = (EditText) findViewById(R.id.location);
+        location.setText(e.location);
+        TimePicker time = (TimePicker) findViewById(R.id.timePicker);
+        time.setCurrentHour(e.hour);
+        time.setCurrentMinute(e.minute);
+
+        ((CheckBox)findViewById(R.id.m)).setChecked(e.days[0]);
+        ((CheckBox)findViewById(R.id.t)).setChecked(e.days[1]);
+        ((CheckBox)findViewById(R.id.w)).setChecked(e.days[2]);
+        ((CheckBox)findViewById(R.id.th)).setChecked(e.days[3]);
+        ((CheckBox)findViewById(R.id.f)).setChecked(e.days[4]);
+        ((CheckBox)findViewById(R.id.s)).setChecked(e.days[5]);
+        ((CheckBox)findViewById(R.id.su)).setChecked(e.days[6]);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_item_adder);
+
+        Intent i = getIntent();
+
+        isEditing = i.getBooleanExtra(MainAct.EXTRA_MSG,false);
+
+        if(isEditing) {
+            e = (Event) i.getSerializableExtra(MainAct.EXTRA_MSG_2);
+            setFromEvent(e);
+        }
     }
 
 
@@ -39,7 +70,8 @@ public class ScheduleItemAdder extends ActionBarActivity {
     //Function that returns an array of booleans based on the days the user checked off for that event
     boolean [] getDays() {
         return new boolean [] { ((CheckBox)findViewById(R.id.m)).isChecked(), ((CheckBox)findViewById(R.id.t)).isChecked(),
-                ((CheckBox)findViewById(R.id.w)).isChecked(), ((CheckBox)findViewById(R.id.th)).isChecked(), ((CheckBox)findViewById(R.id.f)).isChecked()};
+                ((CheckBox)findViewById(R.id.w)).isChecked(), ((CheckBox)findViewById(R.id.th)).isChecked(), ((CheckBox)findViewById(R.id.f)).isChecked(),
+                ((CheckBox)findViewById(R.id.s)).isChecked(),((CheckBox)findViewById(R.id.su)).isChecked()};
     }
 
     //Check if the user selected a day in the provided array
@@ -65,9 +97,8 @@ public class ScheduleItemAdder extends ActionBarActivity {
                         if (new LocationValidatorTask().execute(location.getText().toString(),getApplicationContext()).get()) {
                             //Set the intent to return all the needed data, then finish the activity
                             Intent resultIntent = new Intent();
-                            String[] data = {event_name.getText().toString(), location.getText().toString(), String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute())};
-                            resultIntent.putExtra(MainAct.EXTRA_MSG, data);
-                            resultIntent.putExtra(MainAct.EXTRA_MSG_2,days);
+                            Event e = new Event(event_name.getText().toString(), location.getText().toString(), days, String.valueOf(time.getCurrentHour()), String.valueOf(time.getCurrentMinute()));
+                            resultIntent.putExtra(MainAct.EXTRA_MSG,e);
                             setResult(Activity.RESULT_OK, resultIntent);
                             finish();
                         }

@@ -6,7 +6,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,9 +76,19 @@ public class MainAct extends Activity
     }
 
     //Function that stats the EventTrackerService
-    private void startEventTracker() {
-        Intent mServiceIntent = new Intent(this, EventTrackerService.class);
-        startService(mServiceIntent);
+    public static void startEventTracker(Context c) {
+        Intent mServiceIntent = new Intent(c, EventTrackerService.class);
+        int refresh_milliseconds =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_refresh_interval","1")) * 60 * 1000;
+        int seconds_early = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_minute_early","1")) * 60;
+        int [] arr = {refresh_milliseconds,seconds_early};
+        mServiceIntent.putExtra(EXTRA_MSG, arr);
+        c.startService(mServiceIntent);
+    }
+
+    //Function that stops the event checker service
+    public static void stopEventTracker(Context c){
+        Intent mServiceIntent = new Intent(c, EventTrackerService.class);
+        c.stopService(mServiceIntent);
     }
 
     //Function that initializes the main fragments
@@ -97,7 +109,7 @@ public class MainAct extends Activity
 
         loadData(); //Load the event data
 
-        startEventTracker(); //Start the EventTrackerService
+        startEventTracker(this); //Start the EventTrackerService
 
         //Find the navigation drawer
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);

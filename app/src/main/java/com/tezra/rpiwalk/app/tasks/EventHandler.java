@@ -20,7 +20,7 @@ import com.tezra.rpiwalk.app.R;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class EventLocationListener implements LocationListener {
+public class EventHandler {
 
     /*
     This class is initialized in the EventTrackerService class.
@@ -29,7 +29,7 @@ public class EventLocationListener implements LocationListener {
 
     private Location curLoc; //The current location of the user
     private NotificationManager m; //A reference to the notification manager used to build notifications
-    private int timeDiffSeconds = 5; //How early in seconds the user wants to be to an event
+    private int timeDiffSeconds; //How early in seconds the user wants to be to an event
 
     //A hashmap with the event name as the key and the time it takes to get to the event in seconds
     //this hashmap is flushed whenever the device detects a location change
@@ -123,7 +123,7 @@ public class EventLocationListener implements LocationListener {
 
             //Get the current day of the week
             int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-2;
-            if(day > 0 && day <= 4 && e.days[day]) {
+            if(e.days[day]) {
                 double timeToEvent = getTimeToEvent(e);
                 double daySeconds = getDaySeconds(t);
                 if(timeToEvent > -1) { //If the time to the event could be calculated and matches the set of criteria laid out below
@@ -140,33 +140,20 @@ public class EventLocationListener implements LocationListener {
     }
 
     //When this is set up, initialize the variables
-    public EventLocationListener(Location curLocation, NotificationManager manager, Context con){
+    public EventHandler(Location curLocation, NotificationManager manager, Context con, int early_seconds){
         curLoc = curLocation;
         m = manager;
         c = con;
+        timeDiffSeconds = early_seconds;
         checkEvents();
     }
 
     //When the location gets changed, update the stored location and wipe the timeToEventMap map, then check all the events.
-    @Override
-    public void onLocationChanged(Location loc) {
-        curLoc = loc;
-        timeToEventMap.clear();
+    public void checkEventsHandler(Location loc) {
+        if(curLoc != loc) {
+            curLoc = loc;
+            timeToEventMap.clear();
+        }
         checkEvents();
-    }
-
-    @Override
-    public void onProviderDisabled(String arg0) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String arg0) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-
     }
 }

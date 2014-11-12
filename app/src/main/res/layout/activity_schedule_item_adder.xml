@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:hint="Event name"
         android:textSize="15sp" />
@@ -38,7 +38,7 @@
         android:text="T"
         android:id="@+id/t"
         android:layout_marginTop="35dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="1dp"
         android:layout_below="@+id/location"
         android:layout_toRightOf="@+id/m" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/w"
         android:layout_alignTop="@+id/t"
         android:layout_toRightOf="@+id/t"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="1dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -58,6 +58,7 @@
         android:id="@+id/m"
         android:layout_alignTop="@+id/t"
         android:layout_alignLeft="@+id/location"
+        android:layout_marginLeft="-15dp"
         android:layout_alignStart="@+id/location" />
 
     <CheckBox
@@ -67,7 +68,7 @@
         android:id="@+id/th"
         android:layout_alignTop="@+id/w"
         android:layout_toRightOf="@+id/w"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="1dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -76,7 +77,7 @@
         android:id="@+id/f"
         android:layout_alignTop="@+id/th"
         android:layout_toRightOf="@+id/th"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="1dp" />
 
     <TimePicker
         android:layout_width="wrap_content"
@@ -95,5 +96,24 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="34dp"
         android:onClick="addItem" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="S"
+        android:id="@+id/s"
+        android:layout_toEndOf="@+id/f"
+        android:layout_alignTop="@+id/f"
+        android:layout_toRightOf="@+id/f"
+        android:layout_marginLeft="1dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SU"
+        android:id="@+id/su"
+        android:layout_toRightOf="@+id/s"
+        android:layout_alignTop="@+id/s"
+        android:layout_marginLeft="1dp"/>
 
 </RelativeLayout>

@@ -28,15 +28,19 @@ public class Event implements Serializable {
     private String parseDays(){
         String ret = "";
         if(days[0])
-            ret += "Monday, ";
+            ret += "M ";
         if(days[1])
-            ret += "Tuesday, ";
+            ret += "T ";
         if(days[2])
-            ret += "Wednesday, ";
+            ret += "W ";
         if(days[3])
-            ret += "Thursday, ";
+            ret += "TH ";
         if(days[4])
-            ret += "Friday";
+            ret += "F ";
+        if(days[5])
+            ret += "S ";
+        if(days[6])
+            ret += "SU ";
         if(ret.contains(","))
             return ret.subSequence(0,ret.lastIndexOf(",")).toString();
         else

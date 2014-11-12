@@ -57,7 +57,7 @@ public class ScheduleFragment extends Fragment {
         //Set up the listener so that items can be removed
         final ListView l = lis;
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> myAdapter, View myView,final int myItemInt, long mylng) {
+            public void onItemClick(AdapterView<?> myAdapter, View myView, final int myItemInt, long mylng) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(myView.getContext());
                 builder.setTitle("Edit Item")
                         .setPositiveButton("Delete",new DialogInterface.OnClickListener() {
@@ -66,6 +66,18 @@ public class ScheduleFragment extends Fragment {
                                 MainAct.eventList.remove(myItemInt);
                                 adapter.notifyDataSetChanged();
                                 saveData();
+                            }
+                        })
+                        .setNeutralButton("Edit",new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent i = new Intent(getActivity(),ScheduleItemAdder.class);
+                                i.putExtra(MainAct.EXTRA_MSG,true);
+                                i.putExtra(MainAct.EXTRA_MSG_2,MainAct.eventList.get(myItemInt));
+                                itemList.remove(myItemInt);
+                                MainAct.eventList.remove(myItemInt);
+                                adapter.notifyDataSetChanged();
+                                saveData();
+                                startActivityForResult(i,0);
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -95,7 +107,9 @@ public class ScheduleFragment extends Fragment {
 
     //Function that starts the ScheduleItemAdder activity
     public void addItem(View view){
-        startActivityForResult(new Intent(getActivity(),ScheduleItemAdder.class),0);
+        Intent i = new Intent(getActivity(),ScheduleItemAdder.class);
+        i.putExtra(MainAct.EXTRA_MSG,false);
+        startActivityForResult(i,0);
     }
 
     //Function that parses the results from the ScheduleItemAdder activity
@@ -106,8 +120,7 @@ public class ScheduleFragment extends Fragment {
             case(0) : {
                 if(resultCode == Activity.RESULT_OK) { //If the activity returned successfully
                     //Parse the results into an event
-                    String [] result = data.getStringArrayExtra(MainAct.EXTRA_MSG);
-                    Event e = new Event(result[0],result[1],data.getBooleanArrayExtra(MainAct.EXTRA_MSG_2),result[2],result[3]);
+                    Event e = (Event) data.getSerializableExtra(MainAct.EXTRA_MSG);
 
                     //Add the event to the list of events
                     Map<String,String> tempData = new HashMap<String,String>(2);

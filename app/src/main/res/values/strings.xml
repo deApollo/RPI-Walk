@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">RPI Walk</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_schedule">Schedule</string>
@@ -23,7 +22,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
-    <string name="pref_key_refresh_interval">Enter the time between event checks</string>
-    <string name="pref_key_seconds_early">Enter how many seconds you would like to be early</string>
-
+    <string name="pref_key_refresh_interval">How often would you like the app to check if it\'s time to leave?</string>
+    <string name="pref_key_seconds_early">How early would you like to be?</string>
+    <string name="pref_default_value">1 Minute</string>
 </resources>

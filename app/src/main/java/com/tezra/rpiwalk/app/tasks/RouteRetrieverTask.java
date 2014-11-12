@@ -46,9 +46,6 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
         LocationManager m = (LocationManager) c.getSystemService(c.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(false);
-        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
-        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
         return m.getLastKnownLocation(m.getBestProvider(criteria,true));
     }
 

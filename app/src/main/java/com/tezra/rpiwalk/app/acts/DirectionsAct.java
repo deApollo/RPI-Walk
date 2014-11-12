@@ -25,7 +25,7 @@ public class DirectionsAct extends ActionBarActivity {
 
     /*
     This Activity handles initializing the map and map UI elements.
-    It is either accessed through the "find route" button from the LandingFragment fragment or started by the EventLocationListener
+    It is either accessed through the "find route" button from the LandingFragment fragment or started by the EventHandler
      */
 
     GoogleMap map;
