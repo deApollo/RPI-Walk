@@ -3,13 +3,17 @@ package com.tezra.rpiwalk.app.tasks;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tezra.rpiwalk.app.utils.DatabaseQueryHandler;
 
 
 import java.io.InputStream;
@@ -46,7 +50,10 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
         LocationManager m = (LocationManager) c.getSystemService(c.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        return m.getLastKnownLocation(m.getBestProvider(criteria,true));
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        Location l = m.getLastKnownLocation(m.getBestProvider(criteria,false));
+        return l;
     }
 
     //Function that uses the Google Maps Geocoding API to turn a string into a LatLng pair
@@ -71,7 +78,7 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
                 try {
                     //Otherwise, first attempt to look the location up in the database
                     //If the lookup fails, just geocode the location
-                    String locStr = new DatabaseQuery(c).doQuery(s);
+                    String locStr = new DatabaseQueryHandler(c).doQuery(s);
                     if (locStr != null)
                         return locStr;
                     else
@@ -98,5 +105,4 @@ public class RouteRetrieverTask extends AsyncTask<Object, Void, JsonObject> {
 
         return readJSONFromURL(mQuestLocationsToUrlStr(start,end)).getAsJsonObject();
     }
-
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tezra.rpiwalk.app.utils.DatabaseQueryHandler;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +49,7 @@ public class LocationValidatorTask extends AsyncTask<Object, Void, Boolean> {
 
         //If the location entered exists in the database, just return true
         try {
-            if(new DatabaseQuery(c).doQuery(str) != null)
+            if(new DatabaseQueryHandler(c).doQuery(str) != null)
                 return true;
         } catch (Exception e) {
             Log.e("ERROR", "There was an error executing a database query task");

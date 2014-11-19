@@ -1,4 +1,4 @@
-package com.tezra.rpiwalk.app.tasks;
+package com.tezra.rpiwalk.app.utils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DatabaseQuery {
+public class DatabaseQueryHandler {
 
     /*
     This task queries the rpi_locations.db as to whether the supplied location exists in the database.
@@ -23,7 +23,7 @@ public class DatabaseQuery {
 
     SQLiteDatabase db;
 
-    public DatabaseQuery(Context c){
+    public DatabaseQueryHandler(Context c){
         String DB_PATH = c.getFilesDir().getPath() + "rpi_locations.db";
         try {
             db = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READONLY); //Attempt to open the databae

@@ -1,16 +1,14 @@
-package com.tezra.rpiwalk.app.tasks;
+package com.tezra.rpiwalk.app.utils;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.util.prefs.Preferences;
 
 public class EventTrackerService extends IntentService {
 
@@ -23,7 +21,7 @@ public class EventTrackerService extends IntentService {
         @Override
         public void run() { //The runnable that calls checkEvents()
             LocationManager m = ((LocationManager) getSystemService(Context.LOCATION_SERVICE));
-            lis.checkEventsHandler(m.getLastKnownLocation(m.getBestProvider(c,true)));
+            lis.checkEventsHandler();
             mHandler.postDelayed(mTask,REFRESH_INTERVAL);
         }
     };
@@ -57,7 +55,10 @@ public class EventTrackerService extends IntentService {
         LocationManager m = ((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
         c.setAccuracy(Criteria.ACCURACY_FINE);
-        lis = new EventHandler(m.getLastKnownLocation(m.getBestProvider(c,true)),(NotificationManager)getSystemService(NOTIFICATION_SERVICE),this,seconds_early);
+        c.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+        c.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        lis = new EventHandler(m.getLastKnownLocation(m.getBestProvider(c,false)),(NotificationManager)getSystemService(NOTIFICATION_SERVICE),this,seconds_early);
+        m.requestLocationUpdates(120000,10,c,lis,null);
 
         mHandler.postDelayed(mTask,REFRESH_INTERVAL);
 
@@ -69,6 +70,7 @@ public class EventTrackerService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacks(mTask);
+        ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).removeUpdates(lis);
         Log.v("STOP_SERVICE","DONE");
     }
 }

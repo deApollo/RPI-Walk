@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import com.tezra.rpiwalk.app.utils.Event;
@@ -53,6 +55,20 @@ public class ScheduleFragment extends Fragment {
         ListView lis = (ListView) v.findViewById(R.id.item_list);
         adapter = new SimpleAdapter(getActivity(), itemList,android.R.layout.simple_list_item_2,new String [] {"main","sub"},new int [] {android.R.id.text1,android.R.id.text2});
         lis.setAdapter(adapter);
+
+        final Button b = (Button)v.findViewById(R.id.add_item);
+
+
+        b.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                    b.setBackground(getResources().getDrawable(R.drawable.add_item_pressed));
+                else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    b.setBackground(getResources().getDrawable(R.drawable.add_item_unpressed));
+                return false;
+            }
+        });
 
         //Set up the listener so that items can be removed
         final ListView l = lis;

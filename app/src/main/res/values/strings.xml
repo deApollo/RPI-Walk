@@ -24,5 +24,5 @@
     <string name="action_example">Example action</string>
     <string name="pref_key_refresh_interval">How often would you like the app to check if it\'s time to leave?</string>
     <string name="pref_key_seconds_early">How early would you like to be?</string>
-    <string name="pref_default_value">1 Minute</string>
+    <string name="pref_default_value">1</string>
 </resources>

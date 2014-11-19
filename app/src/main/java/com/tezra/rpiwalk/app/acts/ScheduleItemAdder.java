@@ -1,12 +1,19 @@
 package com.tezra.rpiwalk.app.acts;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -24,7 +31,7 @@ public class ScheduleItemAdder extends ActionBarActivity {
     private void setFromEvent(Event e){
         EditText event_name = (EditText) findViewById(R.id.event_name);
         event_name.setText(e.name);
-        EditText location = (EditText) findViewById(R.id.location);
+        AutoCompleteTextView location = (AutoCompleteTextView) findViewById(R.id.location);
         location.setText(e.location);
         TimePicker time = (TimePicker) findViewById(R.id.timePicker);
         time.setCurrentHour(e.hour);
@@ -52,6 +59,32 @@ public class ScheduleItemAdder extends ActionBarActivity {
             e = (Event) i.getSerializableExtra(MainAct.EXTRA_MSG_2);
             setFromEvent(e);
         }
+
+        ArrayAdapter adp = new ArrayAdapter(this,android.R.layout.select_dialog_item,LandingFragment.locations);
+        AutoCompleteTextView t = (AutoCompleteTextView) findViewById(R.id.location);
+        t.setAdapter(adp);
+
+        t.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+            }
+        });
+
+        final Button c = (Button)findViewById(R.id.button);
+
+
+        c.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                    c.setBackground(getResources().getDrawable(R.drawable.finish_pressed));
+                else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    c.setBackground(getResources().getDrawable(R.drawable.finish_unpressed));
+                return false;
+            }
+        });
     }
 
 
@@ -87,7 +120,7 @@ public class ScheduleItemAdder extends ActionBarActivity {
     public void addItem(View view){
         try {
             EditText event_name = (EditText) findViewById(R.id.event_name);
-            EditText location = (EditText) findViewById(R.id.location);
+            AutoCompleteTextView location = (AutoCompleteTextView) findViewById(R.id.location);
             boolean [] days = getDays();
             TimePicker time = (TimePicker) findViewById(R.id.timePicker);
             //Validate user input

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,7 +15,7 @@ import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 import com.tezra.rpiwalk.app.R;
-import com.tezra.rpiwalk.app.tasks.EventTrackerService;
+import com.tezra.rpiwalk.app.utils.EventTrackerService;
 import com.tezra.rpiwalk.app.utils.Event;
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,8 +77,8 @@ public class MainAct extends Activity
     //Function that stats the EventTrackerService
     public static void startEventTracker(Context c) {
         Intent mServiceIntent = new Intent(c, EventTrackerService.class);
-        int refresh_milliseconds =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_refresh_interval","1")) * 60 * 1000;
-        int seconds_early = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_minute_early","1")) * 60;
+        int refresh_milliseconds =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_refresh_interval","1").split(" ")[0]) * 60 * 1000;
+        int seconds_early = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getString("pref_key_minute_early","1").split(" ")[0]) * 60;
         int [] arr = {refresh_milliseconds,seconds_early};
         mServiceIntent.putExtra(EXTRA_MSG, arr);
         c.startService(mServiceIntent);

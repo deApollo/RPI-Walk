@@ -29,7 +29,7 @@ public class LandingFragment extends Fragment {
      */
 
     //Array of strings used in the AutoCompleteTextViews to aid in typing long campus location names
-    String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
+    public static String [] locations = {"87 Gymnasium", "Academy Hall", "Admissions", "Alumni House", "Alumni Sports & Recreation Center", "Amos Eaton Hall", "Barton Hall", "Beman Park Firehouse",
             "Blaw-Knox 1 & 2", "Blitman Residence Commons", "Bray Hall", "Bryckwyck", "Burdett Avenue Residence Hall", "Carnegie Building","Cary Hall",
             "Center for Biotechnology and Interdisciplinary Studies", "Low Center for Industrial Innovation", "Chapel + Cultural Center", "Cogswell Laboratory", "Colonie Apartments",
             "Commons Dining Hall", "Crockett Hall", "Darrin Communications Center", "Davison Hall", "E Complex", "East Campus Athletic Village Arena", "East Campus Athletic Village Stadium",
@@ -84,6 +84,21 @@ public class LandingFragment extends Fragment {
                     b.setBackground(getResources().getDrawable(R.drawable.location_icon_clicked));
                 else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
                     b.setBackground(getResources().getDrawable(R.drawable.location_icon));
+                return false;
+            }
+        });
+
+        //Set up the art on the "find route" button to switch when clicked on
+        final Button c = (Button)v.findViewById(R.id.find);
+
+
+        c.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                    c.setBackground(getResources().getDrawable(R.drawable.find_route_pressed));
+                else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    c.setBackground(getResources().getDrawable(R.drawable.find_route_unpressed));
                 return false;
             }
         });

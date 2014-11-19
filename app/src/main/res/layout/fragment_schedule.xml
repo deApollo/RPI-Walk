@@ -20,11 +20,12 @@
         android:background="#fff7f6f2" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_item_string"
         android:id="@+id/add_item"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="addItem" />
+        android:onClick="addItem"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:paddingTop="5dp"
+        android:background="@drawable/add_item_unpressed" />
 </RelativeLayout>
